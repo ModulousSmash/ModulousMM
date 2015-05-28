@@ -51,6 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BrawlEX\CharacterManager.cs" />
+    <Compile Include="Config\ConfigFile.cs" />
+    <Compile Include="Config\SDConfigFile.cs" />
     <Compile Include="Mod\Mod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SDCard\SDCard.cs" />

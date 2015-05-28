@@ -9,6 +9,10 @@ using Microsoft.Win32;
 using BrawlLib.IO;
 using BrawlLib.SSBB;
 using BrawlLib.SSBB.ResourceNodes;
+using System.IO;
+using ModulousLib.Config;
+using Newtonsoft.Json;
+
 namespace ModulousMM
 {
 
@@ -34,6 +38,8 @@ namespace ModulousMM
             Application.SetCompatibleTextRenderingDefault(false);
             
             CreativityKitchen.CreativityWin.Registry.RegisterURLProtocol("modulous", Application.ExecutablePath, "URL:Modulous");
+            
+
 
             Application.Run(new MainForm());
         }

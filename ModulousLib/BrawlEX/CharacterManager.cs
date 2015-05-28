@@ -28,19 +28,19 @@ namespace ModulousLib.BrawlEX
         {
             character_name = character_name.ToLower();
             // Stupiduser?
-            if (!System.IO.File.Exists(module_file_path)) { throw new System.Exception("Module does not exist"); return false; }
-            if (!System.IO.File.Exists(cosmetic_file_path)) { throw new System.Exception("Cosmetic file does not exist"); return false; }
-            if (!System.IO.File.Exists(css_slot_file_path)) { throw new System.Exception("CSSlot does not exist"); return false; }
-            if (!System.IO.File.Exists(slot_config_file_path)) { throw new System.Exception("Slot config file does not exist"); return false; }
-            if (!System.IO.File.Exists(fighter_file_path)) { throw new System.Exception("Fighter file does not exist"); return false; }
-            if (!System.IO.Directory.Exists(fighter_data_path)) { throw new System.Exception("Fighter data folder does not exist"); return false; }
+            if (!File.Exists(module_file_path)) { throw new System.Exception("Module does not exist"); return false; }
+            if (!File.Exists(cosmetic_file_path)) { throw new System.Exception("Cosmetic file does not exist"); return false; }
+            if (!File.Exists(css_slot_file_path)) { throw new System.Exception("CSSlot does not exist"); return false; }
+            if (!File.Exists(slot_config_file_path)) { throw new System.Exception("Slot config file does not exist"); return false; }
+            if (!File.Exists(fighter_file_path)) { throw new System.Exception("Fighter file does not exist"); return false; }
+            if (!Directory.Exists(fighter_data_path)) { throw new System.Exception("Fighter data folder does not exist"); return false; }
             if (character_name.Trim() == "" || character_name == null) { throw new System.Exception("Name can't be empty."); return false; }
             /*
              * Gets the next available slot 
              * 
             */
-            string brawlex_data_folder = SDCard.sd_card_path + "\\private\\wii\\app\\RSBE\\pf\\BrawlEx";
-            string css_roster_file_location = brawlex_data_folder + "\\CSSRoster.dat";
+            string brawlex_data_folder = Path.Combine(SDCard.sd_card_path + "private/wii/app/RSBE/pf/BrawlEx");
+            string css_roster_file_location = Path.Combine(brawlex_data_folder + "CSSRoster.dat");
             int character_id;
             int character_count;
             using (var stream = new FileStream(css_roster_file_location, FileMode.Open, FileAccess.ReadWrite))
@@ -67,7 +67,7 @@ namespace ModulousLib.BrawlEX
              * Module bullshit 
              * 
             */
-            System.IO.File.Copy(module_file_path, SDCard.sd_card_path + "\\private\\wii\\app\\RSBE\\pf\\Module\\" + Path.GetFileName(module_file_path));
+            File.Copy(module_file_path, Path.Combine( SDCard.sd_card_path + "private/wii/app/RSBE/pf/Module/", Path.GetFileName(module_file_path)));
             FileMap file = FileMap.FromFile(module_file_path);
             RELNode modules = new RELNode();
             modules.Initialize(null, file);
@@ -75,7 +75,7 @@ namespace ModulousLib.BrawlEX
             byte* pointerToSectionData = (byte*)section._dataBuffer.Address;
             
             Console.WriteLine(Convert.ToUInt32(section.FileOffset, 16).ToString("X"));
-            using (var stream = new FileStream(SDCard.sd_card_path + "\\private\\wii\\app\\RSBE\\pf\\Module\\" + Path.GetFileName(module_file_path), FileMode.Open, FileAccess.ReadWrite))
+            using (var stream = new FileStream(Path.Combine(SDCard.sd_card_path,  "private/wii/app/RSBE/pf/Module/" + Path.GetFileName(module_file_path)), FileMode.Open, FileAccess.ReadWrite))
             {
                 stream.Position = Convert.ToUInt32(section.FileOffset, 16) + 3;
                 stream.WriteByte((byte)character_id);
@@ -85,24 +85,24 @@ namespace ModulousLib.BrawlEX
              * Renames assets and copies them to the appropiate folder. 
              *
             */
-            System.IO.Directory.CreateDirectory(brawlex_data_folder + "\\CosmeticConfig\\");
-            System.IO.Directory.CreateDirectory(brawlex_data_folder + "\\FighterConfig\\");
-            System.IO.Directory.CreateDirectory(brawlex_data_folder + "\\SlotConfig\\");
-            System.IO.Directory.CreateDirectory(brawlex_data_folder + "\\CSSSlotConfig\\");
-            System.IO.File.Copy(cosmetic_file_path, brawlex_data_folder + "\\CosmeticConfig\\Cosmetic" + character_id.ToString("X") + ".dat", true);
-            System.IO.File.Copy(fighter_file_path, brawlex_data_folder + "\\FighterConfig\\Fighter" + character_id.ToString("X") + ".dat", true);
-            System.IO.File.Copy(slot_config_file_path, brawlex_data_folder + "\\SlotConfig\\Slot" + character_id.ToString("X") + ".dat",true);
-            System.IO.File.Copy(css_slot_file_path, brawlex_data_folder + "\\CSSSlotConfig\\CSSSlot" + character_id.ToString("X") + ".dat",true);
+            Directory.CreateDirectory(brawlex_data_folder + "CosmeticConfig/");
+            Directory.CreateDirectory(brawlex_data_folder + "FighterConfig/");
+            Directory.CreateDirectory(brawlex_data_folder + "SlotConfig/");
+            Directory.CreateDirectory(brawlex_data_folder + "CSSSlotConfig/");
+            File.Copy(cosmetic_file_path, Path.Combine(brawlex_data_folder , "CosmeticConfig/Cosmetic" + character_id.ToString("X") + ".dat"), true);
+            File.Copy(fighter_file_path, Path.Combine(brawlex_data_folder , "FighterConfig/Fighter" + character_id.ToString("X") + ".dat"), true);
+            File.Copy(slot_config_file_path, Path.Combine(brawlex_data_folder ,  "SlotConfig/Slot" + character_id.ToString("X") + ".dat"),true);
+            File.Copy(css_slot_file_path,  Path.Combine(brawlex_data_folder , "CSSSlotConfig/CSSSlot" + character_id.ToString("X") + ".dat"),true);
             string[] character_assets_directory_files = Directory.GetFiles(fighter_data_path);
             foreach(string s in character_assets_directory_files)
             {
-                if (!System.IO.Directory.Exists(SDCard.sd_card_path + "\\private\\wii\\app\\RSBE\\pf\\fighter\\" + character_name + "\\"))
+                if (!Directory.Exists(SDCard.sd_card_path + "private/wii/app/RSBE/pf/fighter/" + character_name + ""))
                 {
-                    System.IO.Directory.CreateDirectory(SDCard.sd_card_path + "\\private\\wii\\app\\RSBE\\pf\\fighter\\" + character_name + "\\");
+                    Directory.CreateDirectory(SDCard.sd_card_path + "private/wii/app/RSBE/pf/fighter/" + character_name + "");
                 }
                 
                  
-                File.Copy(s, SDCard.sd_card_path + "\\private\\wii\\app\\RSBE\\pf\\fighter\\" + character_name + "\\" + System.IO.Path.GetFileName(s));
+                File.Copy(s, SDCard.sd_card_path + "private/wii/app/RSBE/pf/fighter/" + character_name + "" + Path.GetFileName(s));
             }
             return true;
         }

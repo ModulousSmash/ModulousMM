@@ -1,6 +1,6 @@
 ﻿namespace ModulousMM
 {
-    partial class MainForm
+    partial class LoginForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,27 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.SuspendLayout();
             // 
-            // ribbonButton1
-            // 
-            // 
-            // MainForm
+            // SelectSDForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1264, 681);
-            this.Name = "MainForm";
+            this.ClientSize = new System.Drawing.Size(624, 321);
+            this.Name = "SelectSDForm";
             this.Text = "Form1";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-
     }
 }
-

@@ -8,9 +8,9 @@ using System.Net;
 namespace ModulousLib
 {
     /// <summary>
-    /// Mod metadata object.
+    /// Website Mod metadata object.
     /// </summary>
-    public class Mod
+    public class OnlineMod
     {
         public string tags                  { get; set; }
         public string website               { get; set; }
@@ -29,7 +29,7 @@ namespace ModulousLib
         public int bg_offset_y              { get; set; }
         public string other_authors         { get; set; }
         public int followers                { get; set; }
-        public Mod()
+        public OnlineMod()
         {
             
         }
@@ -38,22 +38,26 @@ namespace ModulousLib
         /// </summary>
         /// <param name="URL">The API url for the mod.</param>
         /// <returns></returns>
-        public static Mod get_mod_from_API(string URL)
+        public static OnlineMod get_mod_from_API(string URL)
         {
             using(WebClient client = new WebClient()) {
                 string s = client.DownloadString(URL);
-                return JsonConvert.DeserializeObject<Mod>(s);
+                return JsonConvert.DeserializeObject<OnlineMod>(s);
             }
+        }
+        public string get_mod_temp_location()
+        {
+            return "TODO";
         }
         /// <summary>
         /// Reads the file into a Mod object from a file on the hard drive
         /// </summary>
         /// <param name="file">The file to read from</param>
         /// <returns></returns>
-        public static Mod get_mod_from_file(string file)
+        public static OnlineMod get_mod_from_file(string file)
         {
             string file_contents = System.IO.File.ReadAllText(file);
-            return JsonConvert.DeserializeObject<Mod>(file);
+            return JsonConvert.DeserializeObject<OnlineMod>(file);
         }
         /// <summary>
         /// Saves the mod data to a file
