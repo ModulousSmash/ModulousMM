@@ -16,6 +16,7 @@ using ModulousLib.Config;
 using Newtonsoft.Json;
 using MetroFramework.Forms;
 using MetroFramework;
+using ModulousLib.Web;
 namespace ModulousMM
 {
     public partial class MainForm : Form
@@ -29,21 +30,28 @@ namespace ModulousMM
             SetLastError = true,
             CharSet = CharSet.Auto,
             CallingConvention = CallingConvention.StdCall)]
-        private static extern IntPtr GetStdHandle(int nStdHandle);  
+        private static extern IntPtr GetStdHandle(int nStdHandle);
         public MainForm()
         {
-            
+
             InitializeComponent();
             AllocConsole();
             CConsole = new CreativityConsole();
             Console.SetOut(CConsole);
             Console.WriteLine("INFO#Modulous Manager ON " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            
+
 
         }
 
         private unsafe void Form1_Load(object sender, EventArgs e)
         {
+            //we need to trigger a size change callback
+            int mods_size = mods_list_view.Width;
+            mods_list_view.Width = 10;
+            mods_list_view.Width = mods_size;
+            /*
+             * Lua initialization
+             */
             Lua state = new Lua();
             state.LoadCLRPackage();
             SDManager.set_sd_card(@"C:\Users\ALEX\Documents\ModulousTest\test");
@@ -60,7 +68,7 @@ namespace ModulousMM
                 {
                     Globals.config_file = new ConfigFile().FromFile(config_file_path);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     File.Delete(config_file_path);
                     Globals.config_file = new ConfigFile();
@@ -80,7 +88,7 @@ namespace ModulousMM
                 Globals.config_file = new ConfigFile();
                 File.WriteAllText(config_file_path, JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
             }
-            if(Globals.config_file.sd_card_location != null)
+            if (Globals.config_file.sd_card_location != null)
             {
                 if (Directory.Exists(Globals.config_file.sd_card_location))
                 {
@@ -123,12 +131,74 @@ namespace ModulousMM
             File.WriteAllText(config_file_path, JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
             #endregion
             Console.WriteLine("INFO#Found SDCARD at: " + Globals.config_file.sd_card_location);
-            //state.DoFile(Application.StartupPath + "\\data\\lua\\init.lua");
-            //state.DoFile(Application.StartupPath + "\\data\\lua\\startup.lua");
-            //state.DoFile(@"E:\ModulousMMDemo\zip\install.lua");
-            //Mod mod = Mod.get_mod_from_API("http://modulous.net/api/mod/15");
+            ModPage mod_page = ModPage.browse_mods_from_api();
 
+            foreach (OnlineMod mod in mod_page.result)
+            {
+                    //Globals.installed_mods.Add(mod);
+                if (mod.versions[0].ksp_version == "Brawl" || mod.versions[0].ksp_version == "ProjectM")
+                {
+                    ListViewItem item = new ListViewItem(mod.name);
+                    item.SubItems.Add(mod.author);
+                    item.SubItems.Add(mod.versions[0].ksp_version);
+                    mods_list_view.Items.Add(item);
+                }
+            }
+            Console.WriteLine("INFO#" + mod_page.result[0].name);
+            //OnlineMod.install_mod_from_file(@"E:\Modulous\mod.zip");
         }
-        
+        public bool Resizing = false;
+        private void mods_list_view_SizeChanged(object sender, EventArgs e)
+        {
+            // Don't allow overlapping of SizeChanged calls
+            if (!Resizing)
+            {
+                // Set the resizing flag
+                Resizing = true;
+
+                ListView listView = sender as ListView;
+                if (listView != null)
+                {
+                    float totalColumnWidth = 0;
+
+                    // Get the sum of all column tags
+                    for (int i = 0; i < listView.Columns.Count; i++)
+                        totalColumnWidth += Convert.ToInt32(listView.Columns[i].Tag);
+
+                    // Calculate the percentage of space each column should 
+                    // occupy in reference to the other columns and then set the 
+                    // width of the column to that percentage of the visible space.
+                    for (int i = 0; i < listView.Columns.Count; i++)
+                    {
+                        float colPercentage = (Convert.ToInt32(listView.Columns[i].Tag) / totalColumnWidth);
+                        listView.Columns[i].Width = (int)(colPercentage * listView.ClientRectangle.Width);
+                    }
+                }
+            }
+
+            // Clear the resizing flag
+            Resizing = false;
+        }
+
+        private void installPackageManuallyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Zip File (*.zip)|*.zip";
+            dialog.ShowDialog();
+            if (dialog.FileName == null)
+            {
+                return;
+            }
+            try
+            {
+                OnlineMod.install_mod_from_file(dialog.FileName);
+            }
+            catch(Exception es)
+            {
+                Console.WriteLine("ERROR#" + es.StackTrace + es.Message);
+            }
+        }
+
+
     }
 }

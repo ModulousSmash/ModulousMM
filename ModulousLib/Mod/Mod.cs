@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net;
+using Ionic.Zip;
+using System.IO;
+using NLua;
 namespace ModulousLib
 {
     /// <summary>
@@ -14,6 +17,7 @@ namespace ModulousLib
     {
         public string tags                  { get; set; }
         public string website               { get; set; }
+        public string author                { get; set; } 
         public string description           { get; set; }
         public int downloads                { get; set; }
         public string license               { get; set; }
@@ -26,7 +30,6 @@ namespace ModulousLib
         public List<ModVersion> versions    { get; set; }
         public int id                       { get; set; }
         public string source_code           { get; set; }
-        public int bg_offset_y              { get; set; }
         public string other_authors         { get; set; }
         public int followers                { get; set; }
         public OnlineMod()
@@ -38,10 +41,10 @@ namespace ModulousLib
         /// </summary>
         /// <param name="URL">The API url for the mod.</param>
         /// <returns></returns>
-        public static OnlineMod get_mod_from_API(string URL)
+        public static OnlineMod get_mod_from_API(int id)
         {
             using(WebClient client = new WebClient()) {
-                string s = client.DownloadString(URL);
+                string s = client.DownloadString(new Uri(new Uri(Globals.site_url), "api/mod/" + id) );
                 return JsonConvert.DeserializeObject<OnlineMod>(s);
             }
         }
@@ -67,6 +70,34 @@ namespace ModulousLib
         {
             System.IO.File.WriteAllText(target, JsonConvert.SerializeObject(this));
         }
+        /// <summary>
+        /// Installs mod from a zip file
+        /// </summary>
+        /// <param name="file">Mod file</param>
+        public static void install_mod_from_file(string file)
+        {
+            if (!File.Exists(file))
+            {
+                throw (new Exception("Ya blew it, zip file is kill."));
+            }
+            using(ZipFile zip = ZipFile.Read(file))
+            {
+                ZipEntry e = zip["mod.json"];
+                e.Extract(Path.Combine(Path.GetTempPath(), "/mod.json"));
+                ModConfig config = ModConfig.FromFile(Path.Combine(Path.GetTempPath(), "/mod.json"));
+                if(config.game.ToLower() != "brawl" || config.game.ToLower() != "projectm")
+                {
+                    throw (new Exception("Ya blew it, the game you are trying to install a mod for is not yet implemented"));
+                }
+                zip.ExtractAll(Path.Combine(Path.GetTempPath() ,"/Modulous"));
+                Lua state = new Lua();
+                /*
+                 * Runs the installation thread.
+                 */
+                state.LoadCLRPackage();
+                state.LoadFile(Path.Combine(Globals.temporary_path, config.install_script));
+            }
+        }
     }
     public class ModVersion
     {
@@ -76,4 +107,19 @@ namespace ModulousLib
         public string changelog           { get; set; }
         public string download_path       { get; set; }
     }
+    public class ModConfig
+    {
+        public string name { get; set; }
+        public string author { get; set; }
+        public string game { get; set; }
+        public bool mod_installable { get; set; }
+        public string install_script { get; set; }
+        public static ModConfig FromFile(string file)
+        {
+            string file_contents = System.IO.File.ReadAllText(file);
+            return JsonConvert.DeserializeObject<ModConfig>(file);
+        }
+    }
+    
+
 }

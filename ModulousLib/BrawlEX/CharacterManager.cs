@@ -69,15 +69,15 @@ namespace ModulousLib.BrawlEX
             */
             File.Copy(module_file_path, Path.Combine( SDCard.sd_card_path + "private/wii/app/RSBE/pf/Module/", Path.GetFileName(module_file_path)));
             FileMap file = FileMap.FromFile(module_file_path);
-            RELNode modules = new RELNode();
-            modules.Initialize(null, file);
-            ModuleSectionNode section = (ModuleSectionNode)modules.Children[8];
-            byte* pointerToSectionData = (byte*)section._dataBuffer.Address;
-            
-            Console.WriteLine(Convert.ToUInt32(section.FileOffset, 16).ToString("X"));
+            RELNode module = new RELNode();
+            module.Initialize(null, file);
+            ModuleSectionNode character_id_section = (ModuleSectionNode)module.Children[8];
+            byte* pointerToSectionData = (byte*)character_id_section._dataBuffer.Address;
+
+            Console.WriteLine(Convert.ToUInt32(character_id_section.FileOffset, 16).ToString("X"));
             using (var stream = new FileStream(Path.Combine(SDCard.sd_card_path,  "private/wii/app/RSBE/pf/Module/" + Path.GetFileName(module_file_path)), FileMode.Open, FileAccess.ReadWrite))
             {
-                stream.Position = Convert.ToUInt32(section.FileOffset, 16) + 3;
+                stream.Position = Convert.ToUInt32(character_id_section.FileOffset, 16) + 3;
                 stream.WriteByte((byte)character_id);
                 stream.Close();
             }

@@ -38,7 +38,6 @@ namespace ModulousMM
             Application.SetCompatibleTextRenderingDefault(false);
             
             CreativityKitchen.CreativityWin.Registry.RegisterURLProtocol("modulous", Application.ExecutablePath, "URL:Modulous");
-            
 
 
             Application.Run(new MainForm());
