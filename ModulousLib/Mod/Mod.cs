@@ -90,13 +90,17 @@ namespace ModulousLib
                     throw (new Exception("Ya blew it, the game you are trying to install a mod for is not yet implemented"));
                 }
                 zip.ExtractAll(Path.Combine(Path.GetTempPath() ,"/Modulous"));
-                Lua state = new Lua();
-                /*
-                 * Runs the installation thread.
-                 */
-                state.LoadCLRPackage();
-                state.LoadFile(Path.Combine(Globals.temporary_path, config.install_script));
+                install_mod_from_metafile(config);
             }
+        }
+        public static void install_mod_from_metafile(ModConfig config)
+        {
+            Lua state = new Lua();
+            /*
+             * Runs the installation thread.
+             */
+            state.LoadCLRPackage();
+            state.LoadFile(Path.Combine(Globals.temporary_path, config.install_script));
         }
     }
     public class ModVersion
@@ -114,12 +118,47 @@ namespace ModulousLib
         public string game { get; set; }
         public bool mod_installable { get; set; }
         public string install_script { get; set; }
+
         public static ModConfig FromFile(string file)
         {
             string file_contents = System.IO.File.ReadAllText(file);
             return JsonConvert.DeserializeObject<ModConfig>(file);
         }
     }
-    
-
+    public class InstalledMods
+    {
+        public List<InstalledMod> installed_mods { get; set; }
+        public InstalledMods FromFile(string file)
+        {
+            string file_contents = System.IO.File.ReadAllText(file);
+            return JsonConvert.DeserializeObject<InstalledMods>(file);
+        }
+    }
+    public class InstalledMod
+    {
+        public int id                   { get; set; }
+        public bool is_online_mod       { get; set; }
+        public void check_for_update(string name)
+        {
+            OnlineMod mod = OnlineMod.get_mod_from_API(id);
+            string file = "asd";
+            using (ZipFile zip = ZipFile.Read(file))
+            {
+                ZipEntry e = zip["mod.json"];
+                e.Extract(Path.Combine(Path.GetTempPath(), "/mod.json"));
+                ModConfig config = ModConfig.FromFile(Path.Combine(Path.GetTempPath(), "/mod.json"));
+                if (config.game.ToLower() != "brawl" || config.game.ToLower() != "projectm")
+                {
+                    throw (new Exception("Ya blew it, the game you are trying to install a mod for is not yet implemented"));
+                }
+                zip.ExtractAll(Path.Combine(Path.GetTempPath(), "/Modulous"));
+                Lua state = new Lua();
+                /*
+                 * Runs the installation thread.
+                 */
+                state.LoadCLRPackage();
+                state.LoadFile(Path.Combine(Globals.temporary_path, config.install_script));
+            }
+        }
+    }
 }

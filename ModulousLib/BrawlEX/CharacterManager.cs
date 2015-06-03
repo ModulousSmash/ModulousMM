@@ -24,7 +24,7 @@ namespace ModulousLib.BrawlEX
         /// <param name="fighter_data_folder">The path to the fighter data folder</param>
         /// <param name="character_name">the character internal name</param>
         /// <returns>wether or not the action was succesful</returns>
-        public static unsafe bool add_character(string module_file_path, string cosmetic_file_path, string slot_config_file_path, string fighter_file_path, string css_slot_file_path ,string fighter_data_path, string character_name)
+        private static unsafe bool add_character(string module_file_path, string cosmetic_file_path, string slot_config_file_path, string fighter_file_path, string css_slot_file_path ,string fighter_data_path, string character_name)
         {
             character_name = character_name.ToLower();
             // Stupiduser?
@@ -105,6 +105,10 @@ namespace ModulousLib.BrawlEX
                 File.Copy(s, SDCard.sd_card_path + "private/wii/app/RSBE/pf/fighter/" + character_name + "" + Path.GetFileName(s));
             }
             return true;
+        }
+        public static bool add_character_from_mod_root(string module_file_path, string cosmetic_file_path, string slot_config_file_path, string fighter_file_path, string css_slot_file_path, string fighter_data_path, string character_name)
+        {
+            return CharacterManager.add_character(module_file_path, cosmetic_file_path, slot_config_file_path, fighter_file_path, css_slot_file_path, fighter_data_path, character_name);
         }
     }
 }

@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using MetroFramework.Forms;
 using MetroFramework;
 using ModulousLib.Web;
+
 namespace ModulousMM
 {
     public partial class MainForm : Form
@@ -35,16 +36,25 @@ namespace ModulousMM
         {
 
             InitializeComponent();
-            AllocConsole();
-            CConsole = new CreativityConsole();
-            Console.SetOut(CConsole);
-            Console.WriteLine("INFO#Modulous Manager ON " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+
 
 
         }
 
         private unsafe void Form1_Load(object sender, EventArgs e)
         {
+            /*
+            * Console Initialization
+            */
+            #if DEBUG
+            AllocConsole();
+            CConsole = new CreativityConsole();
+            Console.SetOut(CConsole);
+            Console.WriteLine("INFO#Modulous Manager ON " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            this.BringToFront();
+            #endif
+            //loads art
+            reload_art();
             //we need to trigger a size change callback
             int mods_size = mods_list_view.Width;
             mods_list_view.Width = 10;
@@ -135,17 +145,18 @@ namespace ModulousMM
 
             foreach (OnlineMod mod in mod_page.result)
             {
-                    //Globals.installed_mods.Add(mod);
                 if (mod.versions[0].ksp_version == "Brawl" || mod.versions[0].ksp_version == "ProjectM")
                 {
                     ListViewItem item = new ListViewItem(mod.name);
                     item.SubItems.Add(mod.author);
                     item.SubItems.Add(mod.versions[0].ksp_version);
+                    item.Tag = mod;
                     mods_list_view.Items.Add(item);
                 }
             }
             Console.WriteLine("INFO#" + mod_page.result[0].name);
             //OnlineMod.install_mod_from_file(@"E:\Modulous\mod.zip");
+
         }
         public bool Resizing = false;
         private void mods_list_view_SizeChanged(object sender, EventArgs e)
@@ -180,6 +191,20 @@ namespace ModulousMM
             Resizing = false;
         }
 
+        private void reload_art()
+        {
+            // dolphin
+            Image dolphin_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/dolphin.png"));
+            dolphin_tool_strip_button.Image = dolphin_image;
+
+            //settings
+            Image settings_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/settings.png"));
+            settings_strip_button.Image = settings_image;
+            //install sd
+            Image download_button_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/sdinstall.png"));
+            download_button.BackgroundImage = download_button_image;
+        }
+
         private void installPackageManuallyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
@@ -197,6 +222,26 @@ namespace ModulousMM
             {
                 Console.WriteLine("ERROR#" + es.StackTrace + es.Message);
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            OnlineMod mod = (OnlineMod)mods_list_view.SelectedItems[0].Tag;
+            Console.WriteLine(mod.name);
+        }
+
+        private void mods_list_view_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if(mods_list_view.SelectedItems[0].Text != null)
+            {
+                Console.WriteLine();
+            }
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+
+
         }
 
 
