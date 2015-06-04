@@ -46,13 +46,13 @@ namespace ModulousMM
             /*
             * Console Initialization
             */
-            #if DEBUG
+#if DEBUG
             AllocConsole();
             CConsole = new CreativityConsole();
             Console.SetOut(CConsole);
             Console.WriteLine("INFO#Modulous Manager ON " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
             this.BringToFront();
-            #endif
+#endif
             //loads art
             reload_art();
             //we need to trigger a size change callback
@@ -141,17 +141,67 @@ namespace ModulousMM
             File.WriteAllText(config_file_path, JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
             #endregion
             Console.WriteLine("INFO#Found SDCARD at: " + Globals.config_file.sd_card_location);
+            #region Online Mod Gathering
             ModPage mod_page = ModPage.browse_mods_from_api();
-
             foreach (OnlineMod mod in mod_page.result)
             {
                 if (mod.versions[0].ksp_version == "Brawl" || mod.versions[0].ksp_version == "ProjectM")
                 {
+                    bool mod_config_found = false;
                     ListViewItem item = new ListViewItem(mod.name);
                     item.SubItems.Add(mod.author);
                     item.SubItems.Add(mod.versions[0].ksp_version);
+                    foreach (string directory in Directory.GetDirectories(SDCard.sd_card_mod_store_path))
+                    {
+                        if (File.Exists(Path.Combine(directory, "mod.json")))
+                        {
+
+                            ModConfig config = ModConfig.FromFile(Path.Combine(directory, "mod.json"));
+                            if (config.online_mod)
+                            {
+                                if (config.id == mod.id)
+                                {
+                                    Console.WriteLine("wat");
+                                    item.SubItems.Add(config.version.ToString());
+                                    item.SubItems.Add(mod.versions[0].friendly_version);
+                                    mod_config_found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!mod_config_found)
+                        {
+                            Console.WriteLine("INFO#Mod Config Not Found");
+                            item.SubItems.Add("Not Installed");
+                            item.SubItems.Add("Not Installed");
+                        }
+                    }
+
                     item.Tag = mod;
+
                     mods_list_view.Items.Add(item);
+
+                }
+            }
+            #endregion
+
+            foreach (string directory in Directory.GetDirectories(SDCard.sd_card_mod_store_path))
+            {
+                if (File.Exists(Path.Combine(directory, "mod.json")))
+                {
+
+                    ModConfig config = ModConfig.FromFile(Path.Combine(directory, "mod.json"));
+                    if (!config.online_mod)
+                    {
+                        Console.WriteLine("INFO#Found Local Mod: " + config.name);
+                        ListViewItem item = new ListViewItem(config.name);
+                        item.SubItems.Add(config.author);
+                        item.SubItems.Add(config.game);
+                        item.SubItems.Add(config.version.ToString());
+                        item.SubItems.Add("Not a website mod");
+                        mods_list_view.Items.Add(item);
+
+                    }
                 }
             }
             Console.WriteLine("INFO#" + mod_page.result[0].name);
@@ -203,6 +253,13 @@ namespace ModulousMM
             //install sd
             Image download_button_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/sdinstall.png"));
             download_button.BackgroundImage = download_button_image;
+
+            //manual install icon
+            Image manual_install_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/zip.png"));
+            manual_install_button.BackgroundImage = manual_install_image;
+            //manual install icon
+            Image lua_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/lua.png"));
+            run_lua_button.BackgroundImage = lua_image;
         }
 
         private void installPackageManuallyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -216,9 +273,9 @@ namespace ModulousMM
             }
             try
             {
-                OnlineMod.install_mod_from_file(dialog.FileName);
+                //OnlineMod.install_mod_from_file(dialog.FileName);
             }
-            catch(Exception es)
+            catch (Exception es)
             {
                 Console.WriteLine("ERROR#" + es.StackTrace + es.Message);
             }
@@ -232,7 +289,7 @@ namespace ModulousMM
 
         private void mods_list_view_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if(mods_list_view.SelectedItems[0].Text != null)
+            if (mods_list_view.SelectedItems[0].Text != null)
             {
                 Console.WriteLine();
             }
@@ -242,6 +299,42 @@ namespace ModulousMM
         {
 
 
+        }
+
+        private void manual_install_button_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Zip File (*.zip)|*.zip";
+            dialog.ShowDialog();
+            if (dialog.FileName == null)
+            {
+                return;
+            }
+            try
+            {
+                OnlineMod.install_mod_from_file(dialog.FileName);
+            }
+            catch (Exception es)
+            {
+                Console.WriteLine("ERR#" + es.StackTrace + es.Message);
+            }
+        }
+
+        private void run_lua_button_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog file_dialog = new OpenFileDialog();
+            file_dialog.Filter = "Lua File (*.lua)|*.lua";
+            file_dialog.ShowDialog();
+            if (file_dialog.FileName == null)
+            {
+                return;
+            }
+            Lua lua = new Lua();
+            lua.LoadCLRPackage();
+            
+            lua.DoFile(Path.Combine(Application.StartupPath, "data/lua/init.lua"));
+            lua.DoFile(file_dialog.FileName);
+            Console.WriteLine("Running Lua...");
         }
 
 

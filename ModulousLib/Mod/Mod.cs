@@ -8,6 +8,7 @@ using System.Net;
 using Ionic.Zip;
 using System.IO;
 using NLua;
+
 namespace ModulousLib
 {
     /// <summary>
@@ -76,6 +77,7 @@ namespace ModulousLib
         /// <param name="file">Mod file</param>
         public static void install_mod_from_file(string file)
         {
+            Directory.CreateDirectory(Globals.temporary_path);
             if (!File.Exists(file))
             {
                 throw (new Exception("Ya blew it, zip file is kill."));
@@ -83,24 +85,31 @@ namespace ModulousLib
             using(ZipFile zip = ZipFile.Read(file))
             {
                 ZipEntry e = zip["mod.json"];
-                e.Extract(Path.Combine(Path.GetTempPath(), "/mod.json"));
-                ModConfig config = ModConfig.FromFile(Path.Combine(Path.GetTempPath(), "/mod.json"));
-                if(config.game.ToLower() != "brawl" || config.game.ToLower() != "projectm")
+                e.Extract(Path.Combine(Globals.temporary_path));
+                ModConfig config = ModConfig.FromFile(Path.Combine(Globals.temporary_path, "mod.json"));
+                if(config.game.ToLower() != "brawl" && config.game.ToLower() != "projectm")
                 {
                     throw (new Exception("Ya blew it, the game you are trying to install a mod for is not yet implemented"));
                 }
-                zip.ExtractAll(Path.Combine(Path.GetTempPath() ,"/Modulous"));
+                File.Delete(Path.Combine(Globals.temporary_path, "mod.json"));
+                zip.ExtractAll(Globals.temporary_path);
                 install_mod_from_metafile(config);
             }
+            Directory.Delete(Globals.temporary_path, true);
         }
         public static void install_mod_from_metafile(ModConfig config)
         {
-            Lua state = new Lua();
+            Directory.CreateDirectory(Globals.temporary_path);
             /*
              * Runs the installation thread.
              */
+            Lua state = new Lua();
             state.LoadCLRPackage();
-            state.LoadFile(Path.Combine(Globals.temporary_path, config.install_script));
+            state.DoFile(Path.Combine(Globals.AssemblyDirectory, "data/lua/init.lua"));
+            state.DoFile(Path.Combine(Globals.temporary_path, config.install_script));
+            Directory.CreateDirectory(Path.Combine(new string[] {SDCard.sd_card_mod_store_path, config.name}));
+            File.Copy(Path.Combine(Globals.temporary_path, "mod.json"), Path.Combine(new string[] {SDCard.sd_card_mod_store_path, config.name, "mod.json"}));
+            Directory.Delete(Globals.temporary_path, true);
         }
     }
     public class ModVersion
@@ -113,16 +122,18 @@ namespace ModulousLib
     }
     public class ModConfig
     {
+        public int id;
         public string name { get; set; }
         public string author { get; set; }
         public string game { get; set; }
-        public bool mod_installable { get; set; }
+        public bool online_mod { get; set; }
         public string install_script { get; set; }
+        public float version { get; set; }
 
         public static ModConfig FromFile(string file)
         {
             string file_contents = System.IO.File.ReadAllText(file);
-            return JsonConvert.DeserializeObject<ModConfig>(file);
+            return JsonConvert.DeserializeObject<ModConfig>(file_contents);
         }
     }
     public class InstalledMods
@@ -146,12 +157,12 @@ namespace ModulousLib
             {
                 ZipEntry e = zip["mod.json"];
                 e.Extract(Path.Combine(Path.GetTempPath(), "/mod.json"));
-                ModConfig config = ModConfig.FromFile(Path.Combine(Path.GetTempPath(), "/mod.json"));
+                ModConfig config = ModConfig.FromFile(Path.Combine(Path.GetTempPath(), "mod.json"));
                 if (config.game.ToLower() != "brawl" || config.game.ToLower() != "projectm")
                 {
                     throw (new Exception("Ya blew it, the game you are trying to install a mod for is not yet implemented"));
                 }
-                zip.ExtractAll(Path.Combine(Path.GetTempPath(), "/Modulous"));
+                zip.ExtractAll(Path.Combine(Path.GetTempPath(), "Modulous"));
                 Lua state = new Lua();
                 /*
                  * Runs the installation thread.

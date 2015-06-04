@@ -41,6 +41,10 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.download_button = new System.Windows.Forms.Button();
+            this.installed_version = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.latest_version = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.manual_install_button = new System.Windows.Forms.Button();
+            this.run_lua_button = new System.Windows.Forms.Button();
             this.toolStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -53,7 +57,9 @@
             this.mods_list_view.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.name,
             this.author,
-            this.game});
+            this.game,
+            this.installed_version,
+            this.latest_version});
             this.mods_list_view.FullRowSelect = true;
             this.mods_list_view.GridLines = true;
             this.mods_list_view.Location = new System.Drawing.Point(50, 43);
@@ -68,19 +74,19 @@
             // 
             // name
             // 
-            this.name.Tag = "1";
+            this.name.Tag = "2";
             this.name.Text = "Name";
             this.name.Width = 168;
             // 
             // author
             // 
-            this.author.Tag = "1";
+            this.author.Tag = "2";
             this.author.Text = "Author";
             this.author.Width = 215;
             // 
             // game
             // 
-            this.game.Tag = "1";
+            this.game.Tag = "2";
             this.game.Text = "Game";
             // 
             // button1
@@ -141,6 +147,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.run_lua_button);
+            this.panel1.Controls.Add(this.manual_install_button);
             this.panel1.Controls.Add(this.download_button);
             this.panel1.Location = new System.Drawing.Point(0, 43);
             this.panel1.Name = "panel1";
@@ -157,6 +165,40 @@
             this.download_button.Size = new System.Drawing.Size(44, 44);
             this.download_button.TabIndex = 6;
             this.download_button.UseVisualStyleBackColor = true;
+            // 
+            // installed_version
+            // 
+            this.installed_version.Tag = "1";
+            this.installed_version.Text = "Version";
+            // 
+            // latest_version
+            // 
+            this.latest_version.Tag = "1";
+            this.latest_version.Text = "Latest Version";
+            // 
+            // manual_install_button
+            // 
+            this.manual_install_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.manual_install_button.FlatAppearance.BorderSize = 0;
+            this.manual_install_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.manual_install_button.Location = new System.Drawing.Point(3, 53);
+            this.manual_install_button.Name = "manual_install_button";
+            this.manual_install_button.Size = new System.Drawing.Size(44, 44);
+            this.manual_install_button.TabIndex = 7;
+            this.manual_install_button.UseVisualStyleBackColor = true;
+            this.manual_install_button.Click += new System.EventHandler(this.manual_install_button_Click);
+            // 
+            // run_lua_button
+            // 
+            this.run_lua_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.run_lua_button.FlatAppearance.BorderSize = 0;
+            this.run_lua_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.run_lua_button.Location = new System.Drawing.Point(3, 103);
+            this.run_lua_button.Name = "run_lua_button";
+            this.run_lua_button.Size = new System.Drawing.Size(44, 44);
+            this.run_lua_button.TabIndex = 8;
+            this.run_lua_button.UseVisualStyleBackColor = true;
+            this.run_lua_button.Click += new System.EventHandler(this.run_lua_button_Click);
             // 
             // MainForm
             // 
@@ -194,6 +236,10 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton settings_strip_button;
         private System.Windows.Forms.Button download_button;
+        private System.Windows.Forms.ColumnHeader installed_version;
+        private System.Windows.Forms.ColumnHeader latest_version;
+        private System.Windows.Forms.Button manual_install_button;
+        private System.Windows.Forms.Button run_lua_button;
 
 
     }

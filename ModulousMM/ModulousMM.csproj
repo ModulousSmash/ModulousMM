@@ -114,6 +114,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="data\images\lua.psd" />
+    <None Include="data\images\sdinstall.psd" />
+    <None Include="data\images\zip.psd" />
+    <None Include="data\lua\init.lua" />
+    <None Include="data\lua\lib\creativityconsole.lua" />
+    <None Include="data\lua\lib\creativitystring.lua" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -143,6 +149,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="data\images\dolphin.png" />
+    <Content Include="data\images\lua.png" />
+    <Content Include="data\images\sdinstall.png" />
+    <Content Include="data\images\settings.png" />
+    <Content Include="data\images\zip.png" />
     <Content Include="modulousiconfinal.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
