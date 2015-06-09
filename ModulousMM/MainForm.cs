@@ -1,78 +1,68 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Net;
+using System.Reflection;
 using System.Windows.Forms;
-using NLua;
-using System.Runtime.InteropServices;
 using CreativityKitchen;
 using ModulousLib;
-using System.IO;
 using ModulousLib.Config;
-using Newtonsoft.Json;
-using MetroFramework.Forms;
-using MetroFramework;
 using ModulousLib.Web;
+using Newtonsoft.Json;
+using NLua;
 
 namespace ModulousMM
 {
     public partial class MainForm : Form
     {
+        public static ModPage mod_page;
         public static CreativityConsole CConsole;
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
-        [DllImport("kernel32.dll",
-            EntryPoint = "GetStdHandle",
-            SetLastError = true,
-            CharSet = CharSet.Auto,
-            CallingConvention = CallingConvention.StdCall)]
-        private static extern IntPtr GetStdHandle(int nStdHandle);
+        public bool Resizing;
+        public bool Resizing2;
+        public bool temp_folder_busy = false;
+
         public MainForm()
         {
-
             InitializeComponent();
-
-
-
         }
 
-        private unsafe void Form1_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
             /*
             * Console Initialization
             */
 #if DEBUG
-            AllocConsole();
+
+            NativeMethods.AllocConsole();
             CConsole = new CreativityConsole();
             Console.SetOut(CConsole);
-            Console.WriteLine("INFO#Modulous Manager ON " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            this.BringToFront();
+            Console.WriteLine("INFO#Modulous Manager ON " + Assembly.GetExecutingAssembly().GetName().Version);
+            BringToFront();
 #endif
             //loads art
             reload_art();
             //we need to trigger a size change callback
-            int mods_size = mods_list_view.Width;
+            var mods_size = mods_list_view.Width;
             mods_list_view.Width = 10;
             mods_list_view.Width = mods_size;
             /*
              * Lua initialization
              */
-            Lua state = new Lua();
+            var state = new Lua();
             state.LoadCLRPackage();
-            SDManager.set_sd_card(@"C:\Users\ALEX\Documents\ModulousTest\test");
+
             #region Configuration
+
             /*
              * Configuration Initialization 
             */
-            Console.WriteLine(System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-            string config_file_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Modulous/config.json");
+            Console.WriteLine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            var config_file_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "Modulous/config.json");
             Console.WriteLine(config_file_path);
-            if (File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Modulous/config.json")))
+            if (
+                File.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                    "Modulous/config.json")))
             {
                 try
                 {
@@ -84,19 +74,22 @@ namespace ModulousMM
                     Globals.config_file = new ConfigFile();
                     Console.WriteLine("ERR#" + ex.StackTrace);
                     Console.WriteLine("ERR#" + ex.Message);
-                    File.WriteAllText(config_file_path, JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
+                    File.WriteAllText(config_file_path,
+                        JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
                 }
             }
             else if (Directory.Exists(Path.GetDirectoryName(config_file_path)))
             {
                 Globals.config_file = new ConfigFile();
-                File.WriteAllText(config_file_path, JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
+                File.WriteAllText(config_file_path,
+                    JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
             }
             else
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(config_file_path));
                 Globals.config_file = new ConfigFile();
-                File.WriteAllText(config_file_path, JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
+                File.WriteAllText(config_file_path,
+                    JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
             }
             if (Globals.config_file.sd_card_location != null)
             {
@@ -106,109 +99,121 @@ namespace ModulousMM
                 }
                 else
                 {
-                    MessageBox.Show("Your SD card folder does not exist, or it's empty, you must choose a new one now.", "SDCard Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    FolderBrowserDialog folder_browse = new FolderBrowserDialog();
+                    MessageBox.Show(
+                        "Your SD card folder does not exist, or it's empty, you must choose a new one now.",
+                        "SDCard Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    var folder_browse = new FolderBrowserDialog();
                     folder_browse.Description = "Select a new SD folder";
-                selectsderr:
+                    selectsderr:
                     folder_browse.ShowDialog();
-                    if (folder_browse.SelectedPath == null)
+                    if (folder_browse.SelectedPath == "")
                     {
-                        MessageBox.Show("You must select a new SD Card folder.", "SDCard Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        SDManager.set_sd_card(folder_browse.SelectedPath);
+                        MessageBox.Show("You must select a new SD Card folder.", "SDCard Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
                         goto selectsderr;
                     }
                     Globals.config_file.sd_card_location = folder_browse.SelectedPath;
-                    File.WriteAllText(config_file_path, JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
+                    SDManager.set_sd_card(folder_browse.SelectedPath);
+                    File.WriteAllText(config_file_path,
+                        JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
                 }
             }
             else
             {
-                MessageBox.Show("You must select your SD Card or mod installation folder.", "Select your SDCard", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                FolderBrowserDialog folder_browse = new FolderBrowserDialog();
+                MessageBox.Show("You must select your SD Card or mod installation folder.", "Select your SDCard",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                var folder_browse = new FolderBrowserDialog();
                 folder_browse.Description = "Select a new SD folder";
-            selectedsd:
+                selectedsd:
                 folder_browse.ShowDialog();
 
                 if (folder_browse.SelectedPath == null)
                 {
-                    MessageBox.Show("You must select a new SD Card folder.", "SDCard Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("You must select a new SD Card folder.", "SDCard Error", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
                     SDManager.set_sd_card(folder_browse.SelectedPath);
                     goto selectedsd;
                 }
                 Globals.config_file.sd_card_location = folder_browse.SelectedPath;
-                File.WriteAllText(config_file_path, JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
+                File.WriteAllText(config_file_path,
+                    JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
             }
             File.WriteAllText(config_file_path, JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
+
             #endregion
-            Console.WriteLine("INFO#Found SDCARD at: " + Globals.config_file.sd_card_location);
+
             #region Online Mod Gathering
-            ModPage mod_page = ModPage.browse_mods_from_api();
-            foreach (OnlineMod mod in mod_page.result)
-            {
-                if (mod.versions[0].ksp_version == "Brawl" || mod.versions[0].ksp_version == "ProjectM")
-                {
-                    bool mod_config_found = false;
-                    ListViewItem item = new ListViewItem(mod.name);
-                    item.SubItems.Add(mod.author);
-                    item.SubItems.Add(mod.versions[0].ksp_version);
-                    foreach (string directory in Directory.GetDirectories(SDCard.sd_card_mod_store_path))
-                    {
-                        if (File.Exists(Path.Combine(directory, "mod.json")))
-                        {
 
-                            ModConfig config = ModConfig.FromFile(Path.Combine(directory, "mod.json"));
-                            if (config.online_mod)
-                            {
-                                if (config.id == mod.id)
-                                {
-                                    Console.WriteLine("wat");
-                                    item.SubItems.Add(config.version.ToString());
-                                    item.SubItems.Add(mod.versions[0].friendly_version);
-                                    mod_config_found = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!mod_config_found)
-                        {
-                            Console.WriteLine("INFO#Mod Config Not Found");
-                            item.SubItems.Add("Not Installed");
-                            item.SubItems.Add("Not Installed");
-                        }
-                    }
+            mod_page = ModPage.browse_mods_from_api();
+            reload_mods();
 
-                    item.Tag = mod;
-
-                    mods_list_view.Items.Add(item);
-
-                }
-            }
             #endregion
 
-            foreach (string directory in Directory.GetDirectories(SDCard.sd_card_mod_store_path))
+            #region Upate Checking
+
+            foreach (ListViewItem item in mods_list_view.Items)
             {
-                if (File.Exists(Path.Combine(directory, "mod.json")))
+                LocalMod mod = (LocalMod)item.Tag;
+                if (mod.is_installed && mod.is_online)
                 {
-
-                    ModConfig config = ModConfig.FromFile(Path.Combine(directory, "mod.json"));
-                    if (!config.online_mod)
+                    ModVersion version = mod.online_mod.versions[0];
+                    float version_number;
+                    if (float.TryParse(version.friendly_version, out version_number))
                     {
-                        Console.WriteLine("INFO#Found Local Mod: " + config.name);
-                        ListViewItem item = new ListViewItem(config.name);
-                        item.SubItems.Add(config.author);
-                        item.SubItems.Add(config.game);
-                        item.SubItems.Add(config.version.ToString());
-                        item.SubItems.Add("Not a website mod");
-                        mods_list_view.Items.Add(item);
+                        if (version_number > mod.installed_mod.version)
+                        {
+                            temp_folder_busy = true;
+                            Directory.CreateDirectory(ModulousLib.Globals.temporary_path);
+                            if (mods_list_view.SelectedItems == null &&
+                                mods_list_view.SelectedItems[0].SubItems[4].Text == "Not Installed")
+                            {
+                                return;
+                            }
+                            var online_mod = mod.online_mod;
+                            var web_client = new WebClient();
+                            var file_path = "";
+                            var download_item = new ListViewItem(mod.installed_mod.name);
+                            download_item.SubItems.Add("Downloading");
+                            download_item.SubItems.Add("");
+                            download_item = status_list_view.Items.Add(item);
 
+                            web_client.DownloadProgressChanged +=
+                                (s, ex) =>
+                                {
+                                    download_item.SubItems[2].Text = ex.ProgressPercentage.ToString() + "/100";
+                                };
+
+                            web_client.DownloadFileCompleted += (s, ex) =>
+                            {
+                                item.SubItems[1].Text = "Downloaded";
+                                OnlineMod.update_mod_from_file(file_path, mod.installed_mod.id);
+                                temp_folder_busy = false;
+                            };
+                            var file_url =
+                                new Uri(new Uri(ModulousLib.Globals.site_url), mod.online_mod.versions[0].download_path).ToString();
+                            var file_name = "";
+                            web_client.DownloadData(file_url);
+                            if (!String.IsNullOrEmpty(web_client.ResponseHeaders["Content-Disposition"]))
+                            {
+                                file_name =
+                                    web_client.ResponseHeaders["Content-Disposition"].Substring(
+                                        web_client.ResponseHeaders["Content-Disposition"].IndexOf("filename=") + 10)
+                                        .Replace("\"", "");
+                                file_path = Path.Combine(ModulousLib.Globals.temporary_path, file_name);
+                            }
+                            Console.WriteLine(file_path);
+                            //web_client.DownloadFileAsync(), ModulousLib.Globals.temporary_path);            
+                            web_client.DownloadFileAsync(new Uri(file_url), file_path);
+                        }
                     }
                 }
             }
-            Console.WriteLine("INFO#" + mod_page.result[0].name);
-            //OnlineMod.install_mod_from_file(@"E:\Modulous\mod.zip");
 
+            #endregion
+
+            //OnlineMod.install_mod_from_file(@"E:\Modulous\mod.zip");
         }
-        public bool Resizing = false;
+
         private void mods_list_view_SizeChanged(object sender, EventArgs e)
         {
             // Don't allow overlapping of SizeChanged calls
@@ -217,22 +222,22 @@ namespace ModulousMM
                 // Set the resizing flag
                 Resizing = true;
 
-                ListView listView = sender as ListView;
+                var listView = sender as ListView;
                 if (listView != null)
                 {
                     float totalColumnWidth = 0;
 
                     // Get the sum of all column tags
-                    for (int i = 0; i < listView.Columns.Count; i++)
+                    for (var i = 0; i < listView.Columns.Count; i++)
                         totalColumnWidth += Convert.ToInt32(listView.Columns[i].Tag);
 
                     // Calculate the percentage of space each column should 
                     // occupy in reference to the other columns and then set the 
                     // width of the column to that percentage of the visible space.
-                    for (int i = 0; i < listView.Columns.Count; i++)
+                    for (var i = 0; i < listView.Columns.Count; i++)
                     {
-                        float colPercentage = (Convert.ToInt32(listView.Columns[i].Tag) / totalColumnWidth);
-                        listView.Columns[i].Width = (int)(colPercentage * listView.ClientRectangle.Width);
+                        var colPercentage = (Convert.ToInt32(listView.Columns[i].Tag)/totalColumnWidth);
+                        listView.Columns[i].Width = (int) (colPercentage*listView.ClientRectangle.Width);
                     }
                 }
             }
@@ -241,49 +246,120 @@ namespace ModulousMM
             Resizing = false;
         }
 
+        private void reload_mods()
+        {
+            foreach (var mod in mod_page.result)
+            {
+                ModConfig mod_config = new ModConfig();
+                if (mod.versions[0].ksp_version == "Brawl" || mod.versions[0].ksp_version == "ProjectM" ||
+                    mod.versions[0].ksp_version == "test" || mod.versions[0].ksp_version == "Project M")
+                {
+                    var mod_config_found = false;
+                    var item = new ListViewItem(mod.name);
+                    item.SubItems.Add(mod.author);
+                    item.SubItems.Add(mod.versions[0].ksp_version);
+                    foreach (var directory in Directory.GetDirectories(SDCard.sd_card_mod_store_path))
+                    {
+                        if (File.Exists(Path.Combine(directory, "mod.json")))
+                        {
+                            var config = ModConfig.FromFile(Path.Combine(directory, "mod.json"));
+                            if (config.online_mod)
+                            {
+                                if (config.id == mod.id)
+                                {
+                                    Console.WriteLine("wat");
+                                    item.SubItems.Add(config.version.ToString());
+                                    item.SubItems.Add(mod.versions[0].friendly_version);
+                                    mod_config_found = true;
+                                    item.Tag = new LocalMod(mod, config);
+                                    mod_config = config;
+                                    
+                                }
+                            }
+                        }
+
+                    }
+                    if (!mod_config_found)
+                    {
+                        Console.WriteLine(mod.name);
+                        item.Tag = new LocalMod(mod);
+                        Console.WriteLine("INFO#Mod Config Not Found");
+                        item.SubItems.Add("Not Installed");
+                        item.SubItems.Add("Not Installed");
+                    }
+                    mods_list_view.Items.Add(item);
+
+                }
+            }
+            foreach (var directory in Directory.GetDirectories(SDCard.sd_card_mod_store_path))
+            {
+                if (File.Exists(Path.Combine(directory, "mod.json")))
+                {
+                    var config = ModConfig.FromFile(Path.Combine(directory, "mod.json"));
+                    if (!config.online_mod)
+                    {
+                        Console.WriteLine("INFO#Found Local Mod: " + config.name);
+                        var item = new ListViewItem(config.name);
+                        item.SubItems.Add(config.author);
+                        item.SubItems.Add(config.game);
+                        item.SubItems.Add(config.version.ToString());
+                        item.SubItems.Add("Not a website mod");
+                        item.Tag = new LocalMod(config);
+                        mods_list_view.Items.Add(item);
+                    }
+                }
+            }
+        }
+
         private void reload_art()
         {
             // dolphin
-            Image dolphin_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/dolphin.png"));
+            var dolphin_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/dolphin.png"));
             dolphin_tool_strip_button.Image = dolphin_image;
 
             //settings
-            Image settings_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/settings.png"));
+            var settings_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/settings.png"));
             settings_strip_button.Image = settings_image;
             //install sd
-            Image download_button_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/sdinstall.png"));
+            var download_button_image =
+                Image.FromFile(Path.Combine(Application.StartupPath, "data/images/sdinstall.png"));
             download_button.BackgroundImage = download_button_image;
 
             //manual install icon
-            Image manual_install_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/zip.png"));
+            var manual_install_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/zip.png"));
             manual_install_button.BackgroundImage = manual_install_image;
             //manual install icon
-            Image lua_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/lua.png"));
+            var lua_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/lua.png"));
             run_lua_button.BackgroundImage = lua_image;
         }
 
         private void installPackageManuallyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Zip File (*.zip)|*.zip";
-            dialog.ShowDialog();
-            if (dialog.FileName == null)
+            if (!temp_folder_busy)
             {
-                return;
-            }
-            try
-            {
-                //OnlineMod.install_mod_from_file(dialog.FileName);
-            }
-            catch (Exception es)
-            {
-                Console.WriteLine("ERROR#" + es.StackTrace + es.Message);
+                temp_folder_busy = true;
+                var dialog = new OpenFileDialog();
+                dialog.Filter = "Zip File (*.zip)|*.zip";
+                dialog.ShowDialog();
+                if (dialog.FileName == null)
+                {
+                    return;
+                }
+                try
+                {
+                    //OnlineMod.install_mod_from_file(dialog.FileName);
+                }
+                catch (Exception es)
+                {
+                    Console.WriteLine("ERROR#" + es.StackTrace + es.Message);
+                }
+                temp_folder_busy = false;
             }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OnlineMod mod = (OnlineMod)mods_list_view.SelectedItems[0].Tag;
+            var mod = (OnlineMod) mods_list_view.SelectedItems[0].Tag;
             Console.WriteLine(mod.name);
         }
 
@@ -297,46 +373,148 @@ namespace ModulousMM
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-
-
         }
 
         private void manual_install_button_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Zip File (*.zip)|*.zip";
-            dialog.ShowDialog();
-            if (dialog.FileName == null)
+            if (!temp_folder_busy)
             {
-                return;
-            }
-            try
-            {
-                OnlineMod.install_mod_from_file(dialog.FileName);
-            }
-            catch (Exception es)
-            {
-                Console.WriteLine("ERR#" + es.StackTrace + es.Message);
+                temp_folder_busy = true;
+                var dialog = new OpenFileDialog();
+                dialog.Filter = "Zip File (*.zip)|*.zip";
+                dialog.ShowDialog();
+                if (dialog.FileName == null)
+                {
+                    return;
+                }
+                try
+                {
+                    OnlineMod.install_mod_from_file(dialog.FileName);
+                }
+                catch (Exception es)
+                {
+                    Console.WriteLine("ERR#" + es.StackTrace + es.Message);
+                }
+                temp_folder_busy = false;
             }
         }
 
         private void run_lua_button_Click(object sender, EventArgs e)
         {
-            OpenFileDialog file_dialog = new OpenFileDialog();
+            var file_dialog = new OpenFileDialog();
             file_dialog.Filter = "Lua File (*.lua)|*.lua";
             file_dialog.ShowDialog();
             if (file_dialog.FileName == null)
             {
                 return;
             }
-            Lua lua = new Lua();
+            var lua = new Lua();
             lua.LoadCLRPackage();
-            
+
             lua.DoFile(Path.Combine(Application.StartupPath, "data/lua/init.lua"));
             lua.DoFile(file_dialog.FileName);
             Console.WriteLine("Running Lua...");
         }
 
+        private void download_button_Click(object sender, EventArgs e)
+        {
+            if (!temp_folder_busy)
+            {
+                temp_folder_busy = true;
+                Directory.CreateDirectory(ModulousLib.Globals.temporary_path);
+                if (mods_list_view.SelectedItems == null &&
+                    mods_list_view.SelectedItems[0].SubItems[4].Text == "Not Installed")
+                {
+                    return;
+                }
+                var mod = (OnlineMod) mods_list_view.SelectedItems[0].Tag;
+                var web_client = new WebClient();
+                var file_path = "";
+                var item = new ListViewItem(mod.name);
+                item.SubItems.Add("Downloading");
+                item.SubItems.Add("");
+                item = status_list_view.Items.Add(item);
 
+                web_client.DownloadProgressChanged +=
+                    (s, ex) => { item.SubItems[2].Text = ex.ProgressPercentage.ToString() + "/100"; };
+
+                web_client.DownloadFileCompleted += (s, ex) =>
+                {
+                    item.SubItems[1].Text = "Downloaded";
+                    OnlineMod.install_mod_from_file(file_path, mod.id);
+                    temp_folder_busy = false;
+                };
+                var file_url = new Uri(new Uri(ModulousLib.Globals.site_url), mod.versions[0].download_path).ToString();
+                var file_name = "";
+                web_client.DownloadData(file_url);
+                if (!String.IsNullOrEmpty(web_client.ResponseHeaders["Content-Disposition"]))
+                {
+                    file_name =
+                        web_client.ResponseHeaders["Content-Disposition"].Substring(
+                            web_client.ResponseHeaders["Content-Disposition"].IndexOf("filename=") + 10)
+                            .Replace("\"", "");
+                    file_path = Path.Combine(ModulousLib.Globals.temporary_path, file_name);
+                }
+                Console.WriteLine(file_path);
+                //web_client.DownloadFileAsync(), ModulousLib.Globals.temporary_path);            
+                web_client.DownloadFileAsync(new Uri(file_url), file_path);
+            }
+        }
+
+        private void listView1_SizeChanged(object sender, EventArgs e)
+        {
+            // Don't allow overlapping of SizeChanged calls
+            if (!Resizing2)
+            {
+                // Set the resizing flag
+                Resizing2 = true;
+
+                var listView = sender as ListView;
+                if (listView != null)
+                {
+                    float totalColumnWidth = 0;
+
+                    // Get the sum of all column tags
+                    for (var i = 0; i < listView.Columns.Count; i++)
+                        totalColumnWidth += Convert.ToInt32(listView.Columns[i].Tag);
+
+                    // Calculate the percentage of space each column should 
+                    // occupy in reference to the other columns and then set the 
+                    // width of the column to that percentage of the visible space.
+                    for (var i = 0; i < listView.Columns.Count; i++)
+                    {
+                        var colPercentage = (Convert.ToInt32(listView.Columns[i].Tag)/totalColumnWidth);
+                        listView.Columns[i].Width = (int) (colPercentage*listView.ClientRectangle.Width);
+                    }
+                }
+            }
+
+            // Clear the resizing flag
+            Resizing2 = false;
+        }
+
+        private void check_for_updates()
+        {
+            foreach (ListViewItem item in mods_list_view.Items)
+            {
+                OnlineMod mod = (OnlineMod) item.Tag;
+            }
+        }
+
+        private KonamiSequence sequence = new KonamiSequence();
+
+        private void MainForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (sequence.IsCompletedBy(e.KeyCode))
+            {
+                MessageBox.Show("KONAMI!!!");
+            }
+        }
+
+        private void settings_strip_button_Click(object sender, EventArgs e)
+        {
+            SettingsForm form = new SettingsForm();
+            form.Show();
+        }
     }
 }

@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModulousLib", "ModulousLib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModulousMM", "ModulousMM\ModulousMM.csproj", "{34BBF4A9-4561-4E86-843A-2D592C3BC070}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativityKitchen.CreativityConsole", "CreativityLib\CreativityKitchen.CreativityConsole.csproj", "{56646F6E-E756-4A01-998A-C82E742DFB90}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativityConsole", "CreativityLib\CreativityKitchen.CreativityConsole\CreativityConsole.csproj", "{56646F6E-E756-4A01-998A-C82E742DFB90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativityKitchen.CreativityWin", "CreativityKitchen.CreativityWin\CreativityKitchen.CreativityWin.csproj", "{C17F2539-7DFE-49D8-AD3D-0AF108B35EE2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreativityWin", "CreativityLib\CreativityKitchen.CreativityWin\CreativityWin.csproj", "{C17F2539-7DFE-49D8-AD3D-0AF108B35EE2}"
 EndProject
 Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "ModulousLibDocs", "ModulousLibDocs\ModulousLibDocs.shfbproj", "{BC07808C-8FF8-4A5B-8858-F7ED62684B36}"
 EndProject

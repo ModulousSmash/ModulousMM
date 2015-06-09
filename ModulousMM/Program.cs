@@ -1,43 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using CreativityKitchen;
-using Microsoft.Win32;
-using BrawlLib.IO;
-using BrawlLib.SSBB;
-using BrawlLib.SSBB.ResourceNodes;
-using System.IO;
-using ModulousLib.Config;
-using Newtonsoft.Json;
+using CreativityKitchen.CreativityWin;
 
 namespace ModulousMM
 {
-
-    static class Program
+    internal static class Program
     {
-        public static CreativityConsole CConsole;
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
-        [DllImport("kernel32.dll",
-            EntryPoint = "GetStdHandle",
-            SetLastError = true,
-            CharSet = CharSet.Auto,
-            CallingConvention = CallingConvention.StdCall)]
-        private static extern IntPtr GetStdHandle(int nStdHandle);  
         /// <summary>
-        /// The main entry point for the application.
+        ///     The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
-            CreativityKitchen.CreativityWin.Registry.RegisterURLProtocol("modulous", Application.ExecutablePath, "URL:Modulous");
+
+            Registry.RegisterURLProtocol("modulous", Application.ExecutablePath, "URL:Modulous");
 
 
             Application.Run(new MainForm());
