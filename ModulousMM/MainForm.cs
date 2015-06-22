@@ -15,8 +15,7 @@ namespace ModulousMM
 {
     public partial class MainForm : Form
     {
-        public static ModPage mod_page;
-        public static CreativityConsole CConsole;
+
         public bool Resizing;
         public bool Resizing2;
         public bool temp_folder_busy = false;
@@ -31,11 +30,13 @@ namespace ModulousMM
             /*
             * Console Initialization
             */
+            Globals.console_attached = false;
 #if DEBUG
 
             NativeMethods.AllocConsole();
-            CConsole = new CreativityConsole();
-            Console.SetOut(CConsole);
+            Globals.console_attached = true;
+            Globals.CConsole = new CreativityConsole();
+            Console.SetOut(Globals.CConsole);
             Console.WriteLine("INFO#Modulous Manager ON " + Assembly.GetExecutingAssembly().GetName().Version);
             BringToFront();
 #endif
@@ -45,6 +46,9 @@ namespace ModulousMM
             var mods_size = mods_list_view.Width;
             mods_list_view.Width = 10;
             mods_list_view.Width = mods_size;
+            var status_size = status_list_view.Width;
+            status_list_view.Width = 10;
+            status_list_view.Width = status_size;
             /*
              * Lua initialization
              */
@@ -144,13 +148,13 @@ namespace ModulousMM
 
             #region Online Mod Gathering
 
-            mod_page = ModPage.browse_mods_from_api();
+
             reload_mods();
 
             #endregion
 
             #region Upate Checking
-
+            /*
             foreach (ListViewItem item in mods_list_view.Items)
             {
                 LocalMod mod = (LocalMod)item.Tag;
@@ -208,7 +212,7 @@ namespace ModulousMM
                     }
                 }
             }
-
+            */
             #endregion
 
             //OnlineMod.install_mod_from_file(@"E:\Modulous\mod.zip");
@@ -248,6 +252,22 @@ namespace ModulousMM
 
         private void reload_mods()
         {
+            mods_list_view.Items.Clear();
+            ModPage mod_page = new ModPage();
+            try
+            {
+                mod_page = ModPage.browse_mods_from_api();
+            }
+            catch (Exception EX)
+            {
+                Console.WriteLine(EX.Message);
+                MessageBox.Show(
+                "Modulous seems to be down, or you are not connected to the internet",
+                "Connection", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                Application.Exit();
+                return;
+            }
             foreach (var mod in mod_page.result)
             {
                 ModConfig mod_config = new ModConfig();
@@ -418,22 +438,29 @@ namespace ModulousMM
 
         private void download_button_Click(object sender, EventArgs e)
         {
+            LocalMod local_mod = (LocalMod)mods_list_view.SelectedItems[0].Tag;
+            if (!local_mod.is_online)
+            {
+                return;
+            }
             if (!temp_folder_busy)
             {
                 temp_folder_busy = true;
+                OnlineMod mod = local_mod.online_mod;
+                var item = new ListViewItem(mod.name);
+                item.SubItems.Add("Downloading...");
+                item.SubItems.Add("");
+                item = status_list_view.Items.Add(item);
                 Directory.CreateDirectory(ModulousLib.Globals.temporary_path);
                 if (mods_list_view.SelectedItems == null &&
                     mods_list_view.SelectedItems[0].SubItems[4].Text == "Not Installed")
                 {
                     return;
                 }
-                var mod = (OnlineMod) mods_list_view.SelectedItems[0].Tag;
+
                 var web_client = new WebClient();
                 var file_path = "";
-                var item = new ListViewItem(mod.name);
-                item.SubItems.Add("Downloading");
-                item.SubItems.Add("");
-                item = status_list_view.Items.Add(item);
+
 
                 web_client.DownloadProgressChanged +=
                     (s, ex) => { item.SubItems[2].Text = ex.ProgressPercentage.ToString() + "/100"; };
@@ -443,6 +470,7 @@ namespace ModulousMM
                     item.SubItems[1].Text = "Downloaded";
                     OnlineMod.install_mod_from_file(file_path, mod.id);
                     temp_folder_busy = false;
+                    reload_mods();
                 };
                 var file_url = new Uri(new Uri(ModulousLib.Globals.site_url), mod.versions[0].download_path).ToString();
                 var file_name = "";
@@ -514,7 +542,12 @@ namespace ModulousMM
         private void settings_strip_button_Click(object sender, EventArgs e)
         {
             SettingsForm form = new SettingsForm();
-            form.Show();
+            form.ShowDialog();
+        }
+
+        private void dolphin_tool_strip_button_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(@"C:\Users\ALEX\Documents\ladderdolphin\Dolphin-x64\Dolphin.exe");
         }
     }
 }

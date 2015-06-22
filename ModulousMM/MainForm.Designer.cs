@@ -122,6 +122,7 @@
             this.dolphin_tool_strip_button.Name = "dolphin_tool_strip_button";
             this.dolphin_tool_strip_button.Size = new System.Drawing.Size(135, 40);
             this.dolphin_tool_strip_button.Text = "Launch Dolphin";
+            this.dolphin_tool_strip_button.Click += new System.EventHandler(this.dolphin_tool_strip_button_Click);
             // 
             // toolStrip1
             // 
