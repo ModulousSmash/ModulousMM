@@ -10,6 +10,7 @@ using ModulousLib.Config;
 using ModulousLib.Web;
 using Newtonsoft.Json;
 using NLua;
+using XDMessaging;
 
 namespace ModulousMM
 {
@@ -40,6 +41,47 @@ namespace ModulousMM
             Console.WriteLine("INFO#Modulous Manager ON " + Assembly.GetExecutingAssembly().GetName().Version);
             BringToFront();
 #endif
+#region Async Command Listening
+            XDMessagingClient client = new XDMessagingClient();
+            IXDListener listener = client.Listeners.GetListenerForMode(XDTransportMode.HighPerformanceUI);
+            listener.RegisterChannel("modulousmmintercoms");
+            listener.MessageReceived += (o, es) =>
+            {
+                if (es.DataGram.Channel == "modulousmmintercoms")
+                {
+                    string[] command = es.DataGram.Message.Split('#');
+
+                    switch (command[0])
+                    {
+
+                        case "install":
+                            int id;
+                            if (int.TryParse(command[1], out id))
+                            {
+                                try
+                                {
+                                    OnlineMod mod = OnlineMod.get_mod_from_API(id);
+                                    LocalMod local_mod = mod.get_local_mod();
+                                    Console.WriteLine("GOTCHA!!!!");
+                                    if (!local_mod.is_installed)
+                                    {
+                                        install_mod_ui(local_mod);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show(
+    "The mod you are trying to install does not exist, check the console for details.",
+    "API error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    Console.WriteLine("ERR#" + ex.Message);
+                                    Console.WriteLine("ERR#" + ex.StackTrace);
+                                }
+                            }
+                            break;
+                    }
+                }
+            };
+#endregion
             //loads art
             reload_art();
             //we need to trigger a size change callback
@@ -215,6 +257,10 @@ namespace ModulousMM
             */
             #endregion
 
+            if (PreRunModQuery.is_mod_queried)
+            {
+                install_mod_ui(OnlineMod.get_mod_from_API(PreRunModQuery.queried_mod).get_local_mod());
+            }
             //OnlineMod.install_mod_from_file(@"E:\Modulous\mod.zip");
         }
 
@@ -371,7 +417,7 @@ namespace ModulousMM
                 }
                 catch (Exception es)
                 {
-                    Console.WriteLine("ERROR#" + es.StackTrace + es.Message);
+                    Console.WriteLine("ERR#" + es.StackTrace + es.Message);
                 }
                 temp_folder_busy = false;
             }
@@ -438,13 +484,32 @@ namespace ModulousMM
 
         private void download_button_Click(object sender, EventArgs e)
         {
-            LocalMod local_mod = (LocalMod)mods_list_view.SelectedItems[0].Tag;
+            install_mod_ui((LocalMod)mods_list_view.SelectedItems[0].Tag);
+        }
+
+        private void install_mod_ui( LocalMod local_mod)
+        {
             if (!local_mod.is_online)
             {
                 return;
             }
+            if (local_mod.online_mod.get_local_mod().is_installed)
+            {
+                return;
+            }
+            else
+            {
+                DialogResult dialogResult =
+MessageBox.Show("Are you sure you want to install " + local_mod.online_mod.name, "",
+    MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.No)
+                {
+                    return;
+                }
+            }
             if (!temp_folder_busy)
             {
+
                 temp_folder_busy = true;
                 OnlineMod mod = local_mod.online_mod;
                 var item = new ListViewItem(mod.name);
@@ -488,7 +553,6 @@ namespace ModulousMM
                 web_client.DownloadFileAsync(new Uri(file_url), file_path);
             }
         }
-
         private void listView1_SizeChanged(object sender, EventArgs e)
         {
             // Don't allow overlapping of SizeChanged calls
