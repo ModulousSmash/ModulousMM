@@ -17,7 +17,7 @@ namespace ModulousMM
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
+            TempFolder.clean_temp_folder();
             PreRunModQuery.is_mod_queried = false;
 
             Registry.RegisterURLProtocol("modulous", Application.ExecutablePath, "URL:Modulous");

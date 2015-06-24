@@ -41,7 +41,8 @@ namespace ModulousMM
             Console.WriteLine("INFO#Modulous Manager ON " + Assembly.GetExecutingAssembly().GetName().Version);
             BringToFront();
 #endif
-#region Async Command Listening
+
+            #region Async Command Listening
             XDMessagingClient client = new XDMessagingClient();
             IXDListener listener = client.Listeners.GetListenerForMode(XDTransportMode.HighPerformanceUI);
             listener.RegisterChannel("modulousmmintercoms");
@@ -81,9 +82,11 @@ namespace ModulousMM
                     }
                 }
             };
-#endregion
+            #endregion
             //loads art
+            TempFolder.clean_temp_folder();
             reload_art();
+            //HACK:
             //we need to trigger a size change callback
             var mods_size = mods_list_view.Width;
             mods_list_view.Width = 10;
@@ -188,6 +191,39 @@ namespace ModulousMM
 
             #endregion
 
+            #region Safe Checks
+            Console.WriteLine("INFO#Checking if " + Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf") + " Exists");
+             while(!Directory.Exists(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf")) &&
+                !Directory.Exists(Path.Combine(SDCard.sd_card_path, "projectm")))
+            {
+                NativeMethods.SetForegroundWindow(this.Handle);
+                DialogResult dialogResult =
+TopMostMessageBox.Show("There doesn't seem to be a valid Gecko Brawl/Project M installation in your SD Card, click retry to retry or cancel to select a new SDCard folder", "",
+    MessageBoxButtons.RetryCancel);
+                if (dialogResult == DialogResult.Retry)
+                {
+                    continue;
+                }
+                else
+                {
+                    var folder_browse = new FolderBrowserDialog();
+                    folder_browse.Description = "Select a new SD folder";
+                selectsderr:
+                    folder_browse.ShowDialog();
+                    if (folder_browse.SelectedPath == "")
+                    {
+                        MessageBox.Show("You must select a new SD Card folder.", "SDCard Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                        goto selectsderr;
+                    }
+                    Globals.config_file.sd_card_location = folder_browse.SelectedPath;
+                    SDManager.set_sd_card(folder_browse.SelectedPath);
+                    File.WriteAllText(config_file_path,
+                        JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
+                }
+            }
+            #endregion
+
             #region Online Mod Gathering
 
 
@@ -257,10 +293,7 @@ namespace ModulousMM
             */
             #endregion
 
-            if (PreRunModQuery.is_mod_queried)
-            {
-                install_mod_ui(OnlineMod.get_mod_from_API(PreRunModQuery.queried_mod).get_local_mod());
-            }
+
             //OnlineMod.install_mod_from_file(@"E:\Modulous\mod.zip");
         }
 
@@ -324,6 +357,10 @@ namespace ModulousMM
                     var item = new ListViewItem(mod.name);
                     item.SubItems.Add(mod.author);
                     item.SubItems.Add(mod.versions[0].ksp_version);
+                    if (!Directory.Exists(SDCard.sd_card_mod_store_path))
+                    {
+                        Directory.CreateDirectory(SDCard.sd_card_mod_store_path);
+                    }
                     foreach (var directory in Directory.GetDirectories(SDCard.sd_card_mod_store_path))
                     {
                         if (File.Exists(Path.Combine(directory, "mod.json")))
@@ -439,6 +476,10 @@ namespace ModulousMM
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
+            if (PreRunModQuery.is_mod_queried)
+            {
+                install_mod_ui(OnlineMod.get_mod_from_API(PreRunModQuery.queried_mod).get_local_mod());
+            }
         }
 
         private void manual_install_button_Click(object sender, EventArgs e)
@@ -499,8 +540,10 @@ namespace ModulousMM
             }
             else
             {
+                
+                NativeMethods.SetForegroundWindow(this.Handle);
                 DialogResult dialogResult =
-MessageBox.Show("Are you sure you want to install " + local_mod.online_mod.name, "",
+TopMostMessageBox.Show("Are you sure you want to install " + local_mod.online_mod.name + "?", "",
     MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.No)
                 {

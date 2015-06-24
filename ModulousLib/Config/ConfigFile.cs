@@ -14,7 +14,7 @@ namespace ModulousLib.Config
     public class ConfigFile
     {
         public string sd_card_location { get; set; }
-
+        public float version { get; set; }
         public ConfigFile FromFile(string filePath)
         {
             if (File.Exists(filePath))

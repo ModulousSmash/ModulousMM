@@ -134,7 +134,7 @@ namespace ModulousLib.BrawlEX
 
 
                 File.Copy(s,Path.Combine(
-                    SDCard.sd_card_path , "private/wii/app/RSBE/pf/fighter/" , character_name , "" , Path.GetFileName(s)));
+                    SDCard.sd_card_path , "private/wii/app/RSBE/pf/fighter/" , character_name , "" , Path.GetFileName(s)), true);
             }
             return true;
         }
@@ -199,7 +199,7 @@ namespace ModulousLib.BrawlEX
              * 
             */
             File.Copy(module_file_path,
-                Path.Combine(SDCard.sd_card_path + "private/wii/app/RSBE/pf/Module/", Path.GetFileName(module_file_path)));
+                Path.Combine(SDCard.sd_card_path + "private/wii/app/RSBE/pf/Module/", Path.GetFileName(module_file_path)), true);
             var file = FileMap.FromFile(module_file_path);
             var module = new RELNode();
             module.Initialize(null, file);

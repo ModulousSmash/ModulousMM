@@ -141,6 +141,7 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="TempFolder.cs" />
+    <Compile Include="TopMostMessageBox.cs" />
     <Compile Include="VistaShit\ProcessVista.cs" />
     <Compile Include="WaterMarkTextBox.cs">
       <SubType>Component</SubType>
