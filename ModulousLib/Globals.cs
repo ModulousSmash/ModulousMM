@@ -11,7 +11,7 @@ namespace ModulousLib
             get { return "http://modulous.net/"; }
             set { }
         }
-
+        public static ModConfig current_mod_config { get; set; }
         public static string temporary_path
         {
             get { return Path.Combine(Path.GetTempPath(), "Modulous/"); }

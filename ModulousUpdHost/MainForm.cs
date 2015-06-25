@@ -49,6 +49,7 @@ namespace ModulousUpdHost
                 startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
                 startInfo.FileName = "cmd.exe";
                 startInfo.Arguments = "/C xcopy /s " + "\"" + Path.Combine(Globals.temporary_path, "update_temp") + "\" \"" + Application.StartupPath + "\" /Y";
+                MessageBox.Show(File.ReadAllText(Path.Combine(Globals.temporary_path, "update_temp/changelog.txt")));
                 process.StartInfo = startInfo;
                 process.Start();
                 process.WaitForExit();

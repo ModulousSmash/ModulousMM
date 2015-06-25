@@ -30,16 +30,16 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModCreateForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.author_name_text_box = new wmgCMS.WaterMarkTextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.numeric_version_select = new System.Windows.Forms.NumericUpDown();
             this.game_combo_box = new System.Windows.Forms.ComboBox();
+            this.name_text_box = new wmgCMS.WaterMarkTextBox();
             this.select_lua_button = new System.Windows.Forms.Button();
             this.select_mod_root_button = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.save_button = new System.Windows.Forms.Button();
             this.brawlex_checkbox = new System.Windows.Forms.CheckBox();
-            this.author_name_text_box = new wmgCMS.WaterMarkTextBox();
-            this.name_text_box = new wmgCMS.WaterMarkTextBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numeric_version_select)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -58,6 +58,16 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Data";
+            // 
+            // author_name_text_box
+            // 
+            this.author_name_text_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.author_name_text_box.Location = new System.Drawing.Point(107, 20);
+            this.author_name_text_box.Name = "author_name_text_box";
+            this.author_name_text_box.Size = new System.Drawing.Size(100, 20);
+            this.author_name_text_box.TabIndex = 5;
+            this.author_name_text_box.WaterMarkColor = System.Drawing.Color.Gray;
+            this.author_name_text_box.WaterMarkText = "Author";
             // 
             // label1
             // 
@@ -99,6 +109,16 @@
             this.game_combo_box.Name = "game_combo_box";
             this.game_combo_box.Size = new System.Drawing.Size(100, 21);
             this.game_combo_box.TabIndex = 2;
+            // 
+            // name_text_box
+            // 
+            this.name_text_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.name_text_box.Location = new System.Drawing.Point(1, 20);
+            this.name_text_box.Name = "name_text_box";
+            this.name_text_box.Size = new System.Drawing.Size(100, 20);
+            this.name_text_box.TabIndex = 1;
+            this.name_text_box.WaterMarkColor = System.Drawing.Color.Gray;
+            this.name_text_box.WaterMarkText = "Name";
             // 
             // select_lua_button
             // 
@@ -146,30 +166,10 @@
             this.brawlex_checkbox.AutoSize = true;
             this.brawlex_checkbox.Location = new System.Drawing.Point(13, 148);
             this.brawlex_checkbox.Name = "brawlex_checkbox";
-            this.brawlex_checkbox.Size = new System.Drawing.Size(175, 17);
+            this.brawlex_checkbox.Size = new System.Drawing.Size(111, 17);
             this.brawlex_checkbox.TabIndex = 7;
-            this.brawlex_checkbox.Text = "Requires BrawlEX/ProjectM EX";
+            this.brawlex_checkbox.Text = "Requires BrawlEX";
             this.brawlex_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // author_name_text_box
-            // 
-            this.author_name_text_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.author_name_text_box.Location = new System.Drawing.Point(107, 20);
-            this.author_name_text_box.Name = "author_name_text_box";
-            this.author_name_text_box.Size = new System.Drawing.Size(100, 20);
-            this.author_name_text_box.TabIndex = 5;
-            this.author_name_text_box.WaterMarkColor = System.Drawing.Color.Gray;
-            this.author_name_text_box.WaterMarkText = "Author";
-            // 
-            // name_text_box
-            // 
-            this.name_text_box.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.name_text_box.Location = new System.Drawing.Point(1, 20);
-            this.name_text_box.Name = "name_text_box";
-            this.name_text_box.Size = new System.Drawing.Size(100, 20);
-            this.name_text_box.TabIndex = 1;
-            this.name_text_box.WaterMarkColor = System.Drawing.Color.Gray;
-            this.name_text_box.WaterMarkText = "Name";
             // 
             // ModCreateForm
             // 
@@ -184,7 +184,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "ModCreateForm";
-            this.Text = "ModCreateForm";
+            this.Text = "Mod creation tools";
             this.Load += new System.EventHandler(this.ModCreateForm_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

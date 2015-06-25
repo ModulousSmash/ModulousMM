@@ -21,19 +21,20 @@ namespace ModulousMM
             PreRunModQuery.is_mod_queried = false;
 
             Registry.RegisterURLProtocol("modulous", Application.ExecutablePath, "URL:Modulous");
+            bool is_another_instance_running = false;
+            Process[] running_processes = Process.GetProcessesByName("ModulousMM");
+            foreach (Process process in running_processes)
+            {
+                if (!process.ProcessName.Contains("vshost") && process.Id != Process.GetCurrentProcess().Id)
+                {
+                    is_another_instance_running = true;
+                }
+
+
+            }
             foreach (string arg in args)
             {
-                bool is_another_instance_running = false;
-                Process[] running_processes = Process.GetProcessesByName("ModulousMM");
-                foreach (Process process in running_processes)
-                {
-                    if (!process.ProcessName.Contains("vshost") && process.Id != Process.GetCurrentProcess().Id)
-                    {
-                        is_another_instance_running = true;
-                    }
 
-
-                }
                 if (arg.Contains("modulous"))
                 {
                     string[] arg_data = arg.Replace(@"modulous://", "").Split('/');
@@ -77,7 +78,10 @@ namespace ModulousMM
                     }
                 }
             }
-
+            if (is_another_instance_running)
+            {
+                Environment.Exit(0);
+            }
             Application.Run(new MainForm());
         }
     }

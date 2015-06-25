@@ -27,7 +27,6 @@ namespace ModulousMM
         private void ModCreateForm_Load(object sender, EventArgs e)
         {
             game_combo_box.SelectedIndex = 0;
-            game_combo_box.Enabled = false;
         }
 
         private void select_mod_root_button_Click(object sender, EventArgs e)
@@ -83,6 +82,13 @@ namespace ModulousMM
             {
                 MessageBox.Show(
     "The author name is empty or invalid.",
+    "Mod Naming Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (game_combo_box.Text != "brawl".ToLower() || game_combo_box.Text.ToLower() != "projectm")
+            {
+                MessageBox.Show(
+    "The game name is empty or invalid.",
     "Mod Naming Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }

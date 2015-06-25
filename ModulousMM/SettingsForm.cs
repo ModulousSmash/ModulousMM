@@ -58,7 +58,7 @@ namespace ModulousMM
         private void reload_settings()
         {
             sd_folder_browse_textbox.Text = Globals.config_file.sd_card_location;
-            sd_folder_browse_textbox.Text = Globals.config_file.dolphin_location;
+            dolphin_location_text_box.Text = Globals.config_file.dolphin_location;
         }
 
         private void open_mod_creator_Click(object sender, EventArgs e)

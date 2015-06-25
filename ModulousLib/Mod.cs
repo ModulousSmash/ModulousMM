@@ -180,6 +180,7 @@ namespace ModulousLib
             }
             var state = new Lua();
             state.LoadCLRPackage();
+            Globals.current_mod_config = config;
             state.DoFile(Path.Combine(Globals.AssemblyDirectory, "data/lua/init.lua"));
             state.DoFile(Path.Combine(Globals.temporary_path, config.install_script));
             Directory.CreateDirectory(Path.Combine(new string[] {SDCard.sd_card_mod_store_path, config.name}));

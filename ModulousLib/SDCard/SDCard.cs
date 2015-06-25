@@ -37,5 +37,41 @@ namespace ModulousLib
                     Path.Combine(sd_card_path, destination, Path.GetFileName(origin)), true);
             }
         }
+        public static void copy_from_mod_to_pf_folder(string origin, string destination)
+        {
+            var attr = File.GetAttributes(Path.Combine(Globals.temporary_path, origin));
+            if (Globals.current_mod_config.game == "ProjectM")
+            {
+                if (attr.HasFlag(FileAttributes.Directory))
+                {
+                    //HACK: Fuck you .net
+                    DirectoryInfo directory_info = new DirectoryInfo(Path.Combine(Globals.temporary_path, origin));
+                    string directory_target = Path.Combine(sd_card_path, "projectm/pf", destination, directory_info.Name);
+                    new Computer().FileSystem.CopyDirectory(Path.Combine(Globals.temporary_path, origin), directory_target);
+                }
+
+                else
+                {
+                    File.Copy(Path.Combine(Globals.temporary_path, origin),
+                        Path.Combine(sd_card_path, "projectm/pf", destination, Path.GetFileName(origin)), true);
+                }
+            }
+            else
+            {
+                if (attr.HasFlag(FileAttributes.Directory))
+                {
+                    //HACK: Fuck you .net
+                    DirectoryInfo directory_info = new DirectoryInfo(Path.Combine(Globals.temporary_path, origin));
+                    string directory_target = Path.Combine(sd_card_path, "private/wii/app/rsbe/pf", destination, directory_info.Name);
+                    new Computer().FileSystem.CopyDirectory(Path.Combine(Globals.temporary_path, origin), directory_target);
+                }
+
+                else
+                {
+                    File.Copy(Path.Combine(Globals.temporary_path, origin),
+                        Path.Combine(sd_card_path, "private/wii/app/rsbe/pf" ,destination, Path.GetFileName(origin)), true);
+                }
+            }
+        }
     }
 }
