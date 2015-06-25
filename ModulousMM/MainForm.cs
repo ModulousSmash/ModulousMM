@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -13,7 +14,7 @@ using ModulousLib.Web;
 using Newtonsoft.Json;
 using NLua;
 using XDMessaging;
-
+using CreativityKitchen.CreativityWin;
 namespace ModulousMM
 {
     public partial class MainForm : Form
@@ -34,6 +35,7 @@ namespace ModulousMM
             * Console Initialization
             */
             Globals.console_attached = false;
+
 #if DEBUG
 
             NativeMethods.AllocConsole();
@@ -43,6 +45,29 @@ namespace ModulousMM
             Console.WriteLine("INFO#Modulous Manager ON " + Assembly.GetExecutingAssembly().GetName().Version);
             BringToFront();
 #endif
+            if (!File.Exists(Path.Combine(Application.StartupPath, "lock.json")))
+            {
+                ProcessStartInfo info = new ProcessStartInfo(Path.Combine(Application.StartupPath, "ModulousBootStraper.exe"));
+                info.UseShellExecute = true;
+                info.Verb = "runas";
+                string asd = "dummy";
+
+                Console.WriteLine(Path.Combine(Application.StartupPath, "ModulousBootStraper.exe"));
+                try
+                {
+                    Process.Start(info);
+                }
+                catch (Win32Exception ex)
+                {
+                    if (ex.NativeErrorCode == 1223)
+                    {
+                        TopMostMessageBox.Show("You must run the program as admin");
+                        Environment.Exit(0);
+                    }
+                }
+                File.WriteAllText(Path.Combine(Application.StartupPath, "lock.json"), asd);
+            }
+
             #region Manager update checking
             string version_file_path = Path.Combine(Application.StartupPath,
                 "version.json");

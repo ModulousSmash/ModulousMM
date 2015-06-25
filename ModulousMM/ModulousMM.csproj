@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ModulousMM</RootNamespace>
     <AssemblyName>ModulousMM</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -194,11 +194,11 @@
   <ItemGroup>
     <ProjectReference Include="..\CreativityLib\CreativityKitchen.CreativityWin\CreativityWin.csproj">
       <Project>{c17f2539-7dfe-49d8-ad3d-0af108b35ee2}</Project>
-      <Name>CreativityKitchen.CreativityWin</Name>
+      <Name>CreativityWin</Name>
     </ProjectReference>
     <ProjectReference Include="..\CreativityLib\CreativityKitchen.CreativityConsole\CreativityConsole.csproj">
       <Project>{56646f6e-e756-4a01-998a-c82e742dfb90}</Project>
-      <Name>CreativityKitchen.CreativityConsole</Name>
+      <Name>CreativityConsole</Name>
     </ProjectReference>
     <ProjectReference Include="..\ModulousLib\ModulousLib.csproj">
       <Project>{0b72c338-ec5f-4d71-b961-0520e9450e11}</Project>
