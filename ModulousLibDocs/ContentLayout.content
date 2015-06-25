@@ -6,8 +6,8 @@
     </HelpKeywords>
   </Topic>
   <Topic id="08322d5a-e80a-4ad4-9cb8-d32ddb23e499" visible="True" noFile="true" isExpanded="true" title="Modder Documentation">
-    <Topic id="172a92a9-3da1-4a1f-8cd5-a2468aa522ee" visible="True" title="How to make a mod work with the mod manager" />
-    <Topic id="2d4631ba-9ee0-45fd-b822-08f9e7ca1ebf" visible="True" isSelected="true" title="How to write an installation script" />
+    <Topic id="172a92a9-3da1-4a1f-8cd5-a2468aa522ee" visible="True" isSelected="true" title="How to make a mod work with the mod manager" />
+    <Topic id="8995ae9f-e8df-434a-a3da-d1f223bb4c7b" visible="True" title="How to write an installation script" />
   </Topic>
   <Topic id="392392f2-b4c9-44c1-b08d-e7d3814a8263" visible="True" isExpanded="true" title="Version History">
     <HelpKeywords>

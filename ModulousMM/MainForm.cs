@@ -43,7 +43,38 @@ namespace ModulousMM
             Console.WriteLine("INFO#Modulous Manager ON " + Assembly.GetExecutingAssembly().GetName().Version);
             BringToFront();
 #endif
+            #region Manager update checking
+            string version_file_path = Path.Combine(Application.StartupPath,
+                "version.json");
+            try
+            {
+                VersionInfo online_version_info = VersionInfo.get_version_info_from_api();
+                VersionInfo local_version_info = VersionInfo.FromFile(version_file_path);
+                if (online_version_info.version > local_version_info.version)
+                {
+                    //holy shit we are outdated fuck
+                    DialogResult dialog = TopMostMessageBox.Show("Your Mod Manager is outdated, do you want to update?, it will only take a few seconds at most.", "Outdated Mod Manager detected", MessageBoxButtons.YesNo);
+                    if (dialog == DialogResult.Yes)
+                    {
+                        if (File.Exists(Path.Combine(Application.StartupPath, "updater.exe")))
+                        {
+                            File.Delete(Path.Combine(Application.StartupPath, "updater.dat"));
+                        }
+                        File.Copy(Path.Combine(Application.StartupPath, "updater.dat"), Path.Combine(Application.StartupPath, "updater.exe"));
+                        Process.Start(Path.Combine(Application.StartupPath, "updater.exe"));
+                        Application.Exit();
+                    }
 
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+            #endregion
             #region Async Command Listening
             XDMessagingClient client = new XDMessagingClient();
             IXDListener listener = client.Listeners.GetListenerForMode(XDTransportMode.HighPerformanceUI);
@@ -142,60 +173,39 @@ namespace ModulousMM
                 File.WriteAllText(config_file_path,
                     JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
             }
-            if (Globals.config_file.sd_card_location != null)
-            {
-                if (Directory.Exists(Globals.config_file.sd_card_location))
-                {
-                    SDManager.set_sd_card(Globals.config_file.sd_card_location);
-                }
-                else
-                {
-                    MessageBox.Show(
-                        "Your SD card folder does not exist, or it's empty, you must choose a new one now.",
-                        "SDCard Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    var folder_browse = new FolderBrowserDialog();
-                    folder_browse.Description = "Select a new SD folder";
-                    selectsderr:
-                    folder_browse.ShowDialog();
-                    if (folder_browse.SelectedPath == "")
-                    {
-                        MessageBox.Show("You must select a new SD Card folder.", "SDCard Error", MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
-                        goto selectsderr;
-                    }
-                    Globals.config_file.sd_card_location = folder_browse.SelectedPath;
-                    SDManager.set_sd_card(folder_browse.SelectedPath);
-                    File.WriteAllText(config_file_path,
-                        JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
-                }
-            }
-            else
+            if (!Directory.Exists(Globals.config_file.sd_card_location))
             {
                 MessageBox.Show("You must select your SD Card or mod installation folder.", "Select your SDCard",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            while (Globals.config_file.sd_card_location == null)
+            {
+
                 var folder_browse = new FolderBrowserDialog();
                 folder_browse.Description = "Select a new SD folder";
-                selectedsd:
                 folder_browse.ShowDialog();
 
-                if (folder_browse.SelectedPath == null)
+                if (folder_browse.SelectedPath == "")
                 {
                     MessageBox.Show("You must select a new SD Card folder.", "SDCard Error", MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                     SDManager.set_sd_card(folder_browse.SelectedPath);
-                    goto selectedsd;
+                    continue;
                 }
                 Globals.config_file.sd_card_location = folder_browse.SelectedPath;
-                File.WriteAllText(config_file_path,
-                    JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
             }
             File.WriteAllText(config_file_path, JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
-
+            SDManager.set_sd_card(Globals.config_file.sd_card_location);
             #endregion
 
 
 
             #region Safe Checks
+
+            if (!Directory.Exists(SDCard.sd_card_mod_store_path))
+            {
+                Directory.CreateDirectory(SDCard.sd_card_mod_store_path);
+            }
             Console.WriteLine("INFO#Checking if " + Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf") + " Exists");
              while(!Directory.Exists(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf")) &&
                 !Directory.Exists(Path.Combine(SDCard.sd_card_path, "projectm")))
@@ -235,38 +245,7 @@ TopMostMessageBox.Show("There doesn't seem to be a valid Gecko Brawl/Project M i
 
             #endregion
             
-            #region Manager update checking
-            string version_file_path = Path.Combine(Application.StartupPath,
-                "version.json");
-            try
-            {
-                VersionInfo online_version_info = VersionInfo.get_version_info_from_api();
-                VersionInfo local_version_info = VersionInfo.FromFile(version_file_path);
-                if (online_version_info.version > local_version_info.version)
-                {
-                    //holy shit we are outdated fuck
-                    DialogResult dialog = TopMostMessageBox.Show("Your Mod Manager is outdated, do you want to update?, it will only take a few seconds at most.", "Outdated Mod Manager detected", MessageBoxButtons.YesNo);
-                    if (dialog == DialogResult.Yes)
-                    {
-                        if (File.Exists(Path.Combine(Application.StartupPath, "updater.exe")))
-                        {
-                            File.Delete(Path.Combine(Application.StartupPath, "updater.dat"));
-                        }
-                        File.Copy(Path.Combine(Application.StartupPath, "updater.dat"), Path.Combine(Application.StartupPath, "updater.exe"));
-                        Process.Start(Path.Combine(Application.StartupPath, "updater.exe"));
-                        Application.Exit();
-                    }
 
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-
-            #endregion
 
             #region Upate Checking
             /*
