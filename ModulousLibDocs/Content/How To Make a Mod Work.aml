@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="172a92a9-3da1-4a1f-8cd5-a2468aa522ee" revisionNumber="1">
+  <developerHowToDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <para>Making mods work with the mod manager is quite simple, here's a guide on how to do it.</para>
+    </introduction>
+
+    <!-- Optional procedures followed by optional code example but must have
+         at least one procedure or code example -->
+    <procedure>
+      <title>Preparing your working folder</title>
+      <steps class="ordered">
+        <step>
+          <content>
+            <para>You must create a mod root and an empty file ending in .lua, the mod root is basically the root of the generated zip file, and the root for all your installation code to be relative to.</para>
+          </content>
+        </step>
+        <step>
+          <content>
+            <para>Now you must write a installation script inside the .lua file you created, you can look at documentation on how to write one <link xlink:href="2d4631ba-9ee0-45fd-b822-08f9e7ca1ebf">here</link>.</para>
+          </content>
+        </step>
+        <step>
+          <content>
+            <para>You also must copy your mod's files to your mod root folder, remember all paths are relative, so if you have a file named link.txt then in code that file would be link.txt.</para>
+          </content>
+        </step>
+      </steps>
+      <!-- <conclusion>Optional conclusion</conclusion> -->
+    </procedure>
+    <procedure>
+      <title>Packaging your mod</title>
+      <steps class="ordered">
+        <step>
+          <content>
+            <para>Go to the modulous mod manager settings and click "Open Mod Creation Tools", inside there fill all your information, select your Lua script and your mod root.</para>
+          </content>
+        </step>
+        <step>
+          <content>
+            <para>Now after clicking save you will have a zip file, to test it, create a folder and put BrawlEX + CSS Expansion inside just like you would do in a SD Card, go back to settings, change your SD Card location to this new folder and then click on Load Debugging Console.</para>
+          </content>
+        </step>
+		<step>
+          <content>
+            <para>To test your mod, simply click the second option in the main mod manager window and select your ZIP file, if it install without any errors in the console, test it in your wii or in dolphin, and if it works, it's ready to upload to modulous.</para>
+          </content>
+        </step>
+      </steps>
+      <!-- <conclusion>Optional conclusion</conclusion> -->
+    </procedure>
+    <!-- <codeExample>Optional code example</codeExample> -->
+
+    <!-- <buildInstructions>Optional instructions for building a
+         code example.</buildInstructions> -->
+
+    <!-- <robustProgramming>Optional discussion of error handling and other
+         issues related to writing solid code.</robustProgramming> -->
+
+    <!-- <security>Optional discussion of security issues.</security> -->
+
+    <relatedTopics>
+      <!-- One or more of the following:
+           - A local link
+           - An external link
+           - A code entity reference
+
+      <link xlink:href="Other Topic's ID">Link text</link>
+      <externalLink>
+          <linkText>Link text</linkText>
+          <linkAlternateText>Optional alternate link text</linkAlternateText>
+          <linkUri>URI</linkUri>
+      </externalLink>
+      <codeEntityReference>API member ID</codeEntityReference>
+
+      Examples:
+
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8278">Some other topic</link>
+
+      <externalLink>
+          <linkText>SHFB on GitHub</linkText>
+          <linkAlternateText>Go to GitHub</linkAlternateText>
+          <linkUri>https://GitHub.com/EWSoftware/SHFB</linkUri>
+      </externalLink>
+
+      <codeEntityReference>T:TestDoc.TestClass</codeEntityReference>
+      <codeEntityReference>P:TestDoc.TestClass.SomeProperty</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor(System.String,System.Int32)</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.ToString</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.FirstMethod</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.SecondMethod(System.Int32,System.String)</codeEntityReference>
+      -->
+    </relatedTopics>
+  </developerHowToDocument>
+</topic>

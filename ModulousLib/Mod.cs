@@ -161,19 +161,21 @@ namespace ModulousLib
                 }
                 if (!Directory.Exists(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf/BrawlEx/CosmeticConfig")));
                 {
-                    Directory.CreateDirectory(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf/BrawlEx/CosmeticConfig")))
+                    Directory.CreateDirectory(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf/BrawlEx/CosmeticConfig"));
                 }
                 if (!Directory.Exists(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf/BrawlEx/CSSSlotConfig")));
                 {
-                    Directory.CreateDirectory(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf/BrawlEx/CSSSlotConfig")))
+                    Directory.CreateDirectory(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf/BrawlEx/CSSSlotConfig"));
                 }
                 if (!Directory.Exists(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf/BrawlEx/FighterConfig")));
                 {
-                    Directory.CreateDirectory(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf/BrawlEx/FighterConfig")))
+                    Directory.CreateDirectory(Path.Combine(SDCard.sd_card_path,
+                        "private/wii/app/RSBE/pf/BrawlEx/FighterConfig"));
                 }
                 if (!Directory.Exists(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf/BrawlEx/SlotConfig")));
                 {
-                    Directory.CreateDirectory(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf/BrawlEx/SlotConfig")))
+                    Directory.CreateDirectory(Path.Combine(SDCard.sd_card_path,
+                        "private/wii/app/RSBE/pf/BrawlEx/SlotConfig"));
                 }
             }
             var state = new Lua();

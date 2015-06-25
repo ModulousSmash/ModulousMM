@@ -245,13 +245,18 @@ TopMostMessageBox.Show("There doesn't seem to be a valid Gecko Brawl/Project M i
                 if (online_version_info.version > local_version_info.version)
                 {
                     //holy shit we are outdated fuck
-                    if (File.Exists(Path.Combine(Application.StartupPath, "updater.exe")))
+                    DialogResult dialog = TopMostMessageBox.Show("Your Mod Manager is outdated, do you want to update?, it will only take a few seconds at most.", "Outdated Mod Manager detected", MessageBoxButtons.YesNo);
+                    if (dialog == DialogResult.Yes)
                     {
-                        File.Delete(Path.Combine(Application.StartupPath, "updater.dat"));
+                        if (File.Exists(Path.Combine(Application.StartupPath, "updater.exe")))
+                        {
+                            File.Delete(Path.Combine(Application.StartupPath, "updater.dat"));
+                        }
+                        File.Copy(Path.Combine(Application.StartupPath, "updater.dat"), Path.Combine(Application.StartupPath, "updater.exe"));
+                        Process.Start(Path.Combine(Application.StartupPath, "updater.exe"));
+                        Application.Exit();
                     }
-                    File.Copy(Path.Combine(Application.StartupPath, "updater.dat"), Path.Combine(Application.StartupPath, "updater.exe"));
-                    Process.Start(Path.Combine(Application.StartupPath, "updater.exe"));
-                    Application.Exit();
+
                 }
             }
             catch (Exception)
@@ -466,6 +471,13 @@ TopMostMessageBox.Show("There doesn't seem to be a valid Gecko Brawl/Project M i
             //manual install icon
             var lua_image = Image.FromFile(Path.Combine(Application.StartupPath, "data/images/lua.png"));
             run_lua_button.BackgroundImage = lua_image;
+
+            System.Windows.Forms.ToolTip manual_install_tool_tip = new System.Windows.Forms.ToolTip();
+            manual_install_tool_tip.SetToolTip(manual_install_button, "Install mod from ZIP file.");
+
+            System.Windows.Forms.ToolTip online_install_tooltip = new System.Windows.Forms.ToolTip();
+            online_install_tooltip.SetToolTip(download_button, "Install mod from website.");
+        
         }
 
         private void installPackageManuallyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -605,11 +617,11 @@ TopMostMessageBox.Show("Are you sure you want to install " + local_mod.online_mo
 
 
                 web_client.DownloadProgressChanged +=
-                    (s, ex) => { item.SubItems[2].Text = ex.ProgressPercentage.ToString() + "/100"; };
+                    (s, ex) => { item.SubItems[1].Text = ex.ProgressPercentage.ToString() + "/100"; };
 
                 web_client.DownloadFileCompleted += (s, ex) =>
                 {
-                    item.SubItems[1].Text = "Downloaded";
+                    item.SubItems[2].Text = "Downloaded";
                     OnlineMod.install_mod_from_file(file_path, mod.id);
                     temp_folder_busy = false;
                     reload_mods();
@@ -688,7 +700,24 @@ TopMostMessageBox.Show("Are you sure you want to install " + local_mod.online_mo
 
         private void dolphin_tool_strip_button_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(@"C:\Users\ALEX\Documents\ladderdolphin\Dolphin-x64\Dolphin.exe");
+            if (Globals.config_file.dolphin_location != null)
+            {
+                try
+                {
+                    System.Diagnostics.Process.Start(Globals.config_file.dolphin_location);
+                }
+                catch (Exception ex)
+                {
+
+                    MessageBox.Show(ex.Message);
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("You haven't set a Dolphin file path, go to the configuration to set it up.")
+            }
+
         }
     }
 }

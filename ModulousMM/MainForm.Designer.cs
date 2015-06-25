@@ -151,7 +151,7 @@
             this.settings_strip_button.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.settings_strip_button.Name = "settings_strip_button";
             this.settings_strip_button.Size = new System.Drawing.Size(44, 40);
-            this.settings_strip_button.Text = "toolStripButton1";
+            this.settings_strip_button.Text = "Settings";
             this.settings_strip_button.Click += new System.EventHandler(this.settings_strip_button_Click);
             // 
             // status_list_view
@@ -160,8 +160,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.status_list_view.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.downloading_mod_name,
-            this.downloading_mod_status,
-            this.downloading_mod_percentage});
+            this.downloading_mod_percentage,
+            this.downloading_mod_status});
             this.status_list_view.FullRowSelect = true;
             this.status_list_view.GridLines = true;
             this.status_list_view.Location = new System.Drawing.Point(50, 515);
@@ -212,6 +212,7 @@
             this.run_lua_button.Size = new System.Drawing.Size(44, 44);
             this.run_lua_button.TabIndex = 8;
             this.run_lua_button.UseVisualStyleBackColor = true;
+            this.run_lua_button.Visible = false;
             this.run_lua_button.Click += new System.EventHandler(this.run_lua_button_Click);
             // 
             // manual_install_button

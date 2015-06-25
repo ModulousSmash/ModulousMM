@@ -27,8 +27,11 @@ namespace ModulousMM
                 Process[] running_processes = Process.GetProcessesByName("ModulousMM");
                 foreach (Process process in running_processes)
                 {
-
+                    if (!process.ProcessName.Contains("vshost"))
+                    {
                         is_another_instance_running = true;
+                    }
+
 
                 }
                 if (arg.Contains("modulous"))

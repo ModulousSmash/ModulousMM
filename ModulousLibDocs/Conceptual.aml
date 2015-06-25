@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="2d4631ba-9ee0-45fd-b822-08f9e7ca1ebf" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+    <introduction>
+      <!-- Uncomment this to generate an outline of the section and sub-section
+           titles.  Specify a numeric value as the inner text to limit it to
+           a specific number of sub-topics when creating the outline.  Specify
+           zero (0) to limit it to top-level sections only.  -->
+      <!-- <autoOutline /> -->
+      <para>For your mod to install you need to make a Lua script that will tell the manager what to do during installation, here is an example</para>
+    </introduction>
+    <!-- Add one or more top-level section elements.  These are collapsible.
+         If using <autoOutline />, add an address attribute to identify it
+         and specify a title so that it can be jumped to with a hyperlink. -->
+    <section address="Section1">
+      <content>
+        <!-- Uncomment this to create a sub-section outline
+        <autoOutline /> -->
+        		<code>SDCard.copy_from_mod_to_sd_card("File!.txt", "")
+SDCard.copy_from_mod_to_sd_card("im a folder/", "/")
+CharacterManager.add_character_from_mod_root("ft_oldlink.rel", "Cosmetic40.dat", "Slot40.dat", "Fighter40.dat", "CSSSlot40.dat", "Link" , "Oldlink")</code>
+<para>
+This code copies a file named "File!" and a folder named "im a folder" into the sd card root, it also adds a character named Oldlink and it's respective CSS files from the mod root.
+</para>
+      </content>
+      <!-- If a section contains a sections element, its content creates
+           sub-sections.  These are not collapsible.
+      <sections>
+          <section address="SubSection1">
+              <title>Sub-section 1</title>
+              <content>
+                  <para>Sub-section content.</para>
+              </content>
+          </section>
+          <section address="SubSection2">
+              <title>Sub-section 2</title>
+              <content>
+                  <para>Sub-section content.</para>
+              </content>
+          </section>
+      </sections> -->
+    </section>
+    <relatedTopics>
+      <!-- One or more of the following:
+           - A local link
+           - An external link
+           - A code entity reference
+
+      <link xlink:href="Other Topic's ID"/>
+      <link xlink:href="Other Topic's ID">Link inner text</link>
+
+      <externalLink>
+          <linkText>Link text</linkText>
+          <linkAlternateText>Optional alternate link text</linkAlternateText>
+          <linkUri>URI</linkUri>
+      </externalLink>
+
+      <codeEntityReference>API member ID</codeEntityReference>
+
+      Examples:
+
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8270" />
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8278">Some other topic</link>
+
+      <externalLink>
+          <linkText>SHFB on GitHub</linkText>
+          <linkAlternateText>Go to GitHub</linkAlternateText>
+          <linkUri>https://GitHub.com/EWSoftware/SHFB</linkUri>
+      </externalLink>
+
+      <codeEntityReference>T:TestDoc.TestClass</codeEntityReference>
+      <codeEntityReference>P:TestDoc.TestClass.SomeProperty</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor(System.String,System.Int32)</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.ToString</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.FirstMethod</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.SecondMethod(System.Int32,System.String)</codeEntityReference>
+      -->
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

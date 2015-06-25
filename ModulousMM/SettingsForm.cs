@@ -58,12 +58,32 @@ namespace ModulousMM
         private void reload_settings()
         {
             sd_folder_browse_textbox.Text = Globals.config_file.sd_card_location;
+            sd_folder_browse_textbox.Text = Globals.config_file.dolphin_location;
         }
 
         private void open_mod_creator_Click(object sender, EventArgs e)
         {
             ModCreateForm mod_form = new ModCreateForm();
             mod_form.Show();
+        }
+
+        private void browse_dolphin_path_button_Click(object sender, EventArgs e)
+        {
+            var config_file_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+"Modulous/config.json");
+            var file_browse = new OpenFileDialog();
+            file_browse.Filter = "Portable Executable File (*.exe)|*.exe";
+            file_browse.ShowDialog();
+            if (file_browse.FileName != null)
+            {
+                //do nothing lol
+            }
+            else
+            {
+                Globals.config_file.dolphin_location = file_browse.FileName;
+                File.WriteAllText(config_file_path,
+                    JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
+            }
         }
     }
 }
