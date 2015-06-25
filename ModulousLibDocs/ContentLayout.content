@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Topics>
-  <Topic id="e22981ff-8c54-4c84-8b2d-ef10062698c1" visible="True" isDefault="true" isSelected="true" title="Welcome to the [TODO: Add project name]">
+  <Topic id="e22981ff-8c54-4c84-8b2d-ef10062698c1" visible="True" isDefault="true" isSelected="true" title="Welcome to the Modulous Mod Manager documentation">
     <HelpKeywords>
       <HelpKeyword index="K" term="Welcome" />
     </HelpKeywords>

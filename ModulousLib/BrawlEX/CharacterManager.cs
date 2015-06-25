@@ -94,7 +94,7 @@ namespace ModulousLib.BrawlEX
             var character_id_section = (ModuleSectionNode) module.Children[8];
             var pointerToSectionData = (byte*) character_id_section._dataBuffer.Address;
             File.Copy(module_file_path,
-                Path.Combine(SDCard.sd_card_path + "/private/wii/app/RSBE/pf/Module/", Path.GetFileName(module_file_path)));
+                Path.Combine(SDCard.sd_card_path + "/private/wii/app/RSBE/pf/Module/", Path.GetFileName(module_file_path)), true);
             Console.WriteLine(Convert.ToUInt32(character_id_section.FileOffset, 16).ToString("X"));
             using (
                 var stream =

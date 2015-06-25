@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CreativityKitchen.CreativityConsole</name>
+    </assembly>
+    <members>
+        <member name="T:CreativityKitchen.CreativityConsole">
+            <summary>
+                This class performs an important function.
+            </summary>
+        </member>
+        <member name="M:CreativityKitchen.CreativityConsole.WriteLine(System.String)">
+            <summary>
+                Extends the default console functions to have coloring, the three codes are WARN#, INFO# and ERR.
+            </summary>
+            >
+        </member>
+    </members>
+</doc>

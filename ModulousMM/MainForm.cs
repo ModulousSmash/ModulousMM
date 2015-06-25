@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
@@ -191,6 +193,8 @@ namespace ModulousMM
 
             #endregion
 
+
+
             #region Safe Checks
             Console.WriteLine("INFO#Checking if " + Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf") + " Exists");
              while(!Directory.Exists(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf")) &&
@@ -228,6 +232,34 @@ TopMostMessageBox.Show("There doesn't seem to be a valid Gecko Brawl/Project M i
 
 
             reload_mods();
+
+            #endregion
+            
+            #region Manager update checking
+            string version_file_path = Path.Combine(Application.StartupPath,
+                "version.json");
+            try
+            {
+                VersionInfo online_version_info = VersionInfo.get_version_info_from_api();
+                VersionInfo local_version_info = VersionInfo.FromFile(version_file_path);
+                if (online_version_info.version > local_version_info.version)
+                {
+                    //holy shit we are outdated fuck
+                    if (File.Exists(Path.Combine(Application.StartupPath, "updater.exe")))
+                    {
+                        File.Delete(Path.Combine(Application.StartupPath, "updater.dat"));
+                    }
+                    File.Copy(Path.Combine(Application.StartupPath, "updater.dat"), Path.Combine(Application.StartupPath, "updater.exe"));
+                    Process.Start(Path.Combine(Application.StartupPath, "updater.exe"));
+                    Application.Exit();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
 
             #endregion
 
@@ -458,6 +490,7 @@ TopMostMessageBox.Show("There doesn't seem to be a valid Gecko Brawl/Project M i
                 }
                 temp_folder_busy = false;
             }
+            reload_mods();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -504,6 +537,7 @@ TopMostMessageBox.Show("There doesn't seem to be a valid Gecko Brawl/Project M i
                 }
                 temp_folder_busy = false;
             }
+            reload_mods();
         }
 
         private void run_lua_button_Click(object sender, EventArgs e)

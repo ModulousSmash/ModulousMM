@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace ModulousLib.Web
 {
@@ -27,6 +28,30 @@ namespace ModulousLib.Web
                 result.result = result.result.OrderBy(mod => mod.id).ToList();
                 return result;
             }
+        }
+    }
+
+    public class VersionInfo
+    {
+        public float version { get; set; }
+        public string version_path { get; set; }
+
+        public static VersionInfo get_version_info_from_api()
+        {
+                using (var client = new WebClient())
+                {
+                    var s =
+                        client.DownloadString(new Uri(new Uri(Globals.site_url),
+                            "/api/modmm/updates"));
+                    var result = JsonConvert.DeserializeObject<VersionInfo>(s);
+                    return result;
+                }
+        }
+
+        public static VersionInfo FromFile(string file)
+        {
+            var file_contents = File.ReadAllText(file);
+            return JsonConvert.DeserializeObject<VersionInfo>(file_contents);
         }
     }
 }

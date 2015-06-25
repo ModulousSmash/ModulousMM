@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
+using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.Devices;
 
 namespace ModulousLib
@@ -23,14 +25,16 @@ namespace ModulousLib
             var attr = File.GetAttributes(Path.Combine(Globals.temporary_path, origin));
             if (attr.HasFlag(FileAttributes.Directory))
             {
-                new Computer().FileSystem.CopyDirectory(Path.Combine(Globals.temporary_path, origin),
-                    Path.Combine(sd_card_path, destination));
+                //HACK: Fuck you .net
+                DirectoryInfo directory_info = new DirectoryInfo(Path.Combine(Globals.temporary_path, origin));
+                string directory_target = Path.Combine(sd_card_path, destination, directory_info.Name);
+                new Computer().FileSystem.CopyDirectory(Path.Combine(Globals.temporary_path, origin), directory_target);
             }
 
             else
             {
                 File.Copy(Path.Combine(Globals.temporary_path, origin),
-                    Path.Combine(sd_card_path, destination, Path.GetFileName(origin)));
+                    Path.Combine(sd_card_path, destination, Path.GetFileName(origin)), true);
             }
         }
     }
