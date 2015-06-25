@@ -201,11 +201,6 @@ namespace ModulousMM
 
 
             #region Safe Checks
-
-            if (!Directory.Exists(SDCard.sd_card_mod_store_path))
-            {
-                Directory.CreateDirectory(SDCard.sd_card_mod_store_path);
-            }
             Console.WriteLine("INFO#Checking if " + Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf") + " Exists");
              while(!Directory.Exists(Path.Combine(SDCard.sd_card_path, "private/wii/app/RSBE/pf")) &&
                 !Directory.Exists(Path.Combine(SDCard.sd_card_path, "projectm")))
@@ -237,7 +232,10 @@ TopMostMessageBox.Show("There doesn't seem to be a valid Gecko Brawl/Project M i
                 }
             }
             #endregion
-
+             if (!Directory.Exists(SDCard.sd_card_mod_store_path))
+             {
+                 Directory.CreateDirectory(SDCard.sd_card_mod_store_path);
+             }
             #region Online Mod Gathering
 
 
