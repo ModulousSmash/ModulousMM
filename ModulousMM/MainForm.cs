@@ -392,7 +392,15 @@ TopMostMessageBox.Show("There doesn't seem to be a valid Gecko Brawl/Project M i
                 {
                     var mod_config_found = false;
                     var item = new ListViewItem(mod.name);
-                    item.SubItems.Add(mod.author);
+                    if (mod.other_authors != "" && mod.other_authors != null)
+                    {
+                        item.SubItems.Add(mod.author + ", " + mod.other_authors);
+                    }
+                    else
+                    {
+                        item.SubItems.Add(mod.author);
+                    }
+
                     item.SubItems.Add(mod.versions[0].ksp_version);
                     if (!Directory.Exists(SDCard.sd_card_mod_store_path))
                     {
@@ -523,7 +531,15 @@ TopMostMessageBox.Show("There doesn't seem to be a valid Gecko Brawl/Project M i
         {
             if (PreRunModQuery.is_mod_queried)
             {
-                install_mod_ui(OnlineMod.get_mod_from_API(PreRunModQuery.queried_mod).get_local_mod());
+                try
+                {
+                    LocalMod mod = OnlineMod.get_mod_from_API(PreRunModQuery.queried_mod).get_local_mod();
+                    install_mod_ui(mod);
+                }
+                catch
+                {
+
+                }
             }
         }
 

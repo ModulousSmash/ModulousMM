@@ -8,7 +8,7 @@ namespace ModulousLib
     {
         public static string site_url
         {
-            get { return "http://dev.modulous.net/"; }
+            get { return "http://modulous.net/"; }
             set { }
         }
 
