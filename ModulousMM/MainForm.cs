@@ -715,7 +715,7 @@ TopMostMessageBox.Show("Are you sure you want to install " + local_mod.online_mo
             }
             else
             {
-                MessageBox.Show("You haven't set a Dolphin file path, go to the configuration to set it up.")
+                MessageBox.Show("You haven't set a Dolphin file path, go to the configuration to set it up.");
             }
 
         }
