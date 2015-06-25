@@ -85,7 +85,7 @@ namespace ModulousMM
     "Mod Naming Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (game_combo_box.Text != "brawl".ToLower() || game_combo_box.Text.ToLower() != "projectm")
+            if (game_combo_box.Text.ToLower() != "brawl" && game_combo_box.Text.ToLower() != "projectm")
             {
                 MessageBox.Show(
     "The game name is empty or invalid.",

@@ -66,7 +66,7 @@ namespace ModulousUpdHost
                 System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
                 //startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
                 startInfo.FileName = "cmd.exe";
-                startInfo.Arguments = "/K xcopy /s " + "\"" + Path.Combine(Globals.temporary_path, "update_temp") + "\" \"" + Application.StartupPath + "\" /Y /C";
+                startInfo.Arguments = "/C xcopy /s " + "\"" + Path.Combine(Globals.temporary_path, "update_temp") + "\" \"" + Application.StartupPath + "\" /Y /C";
 
                 process.StartInfo = startInfo;
                 process.Start();
