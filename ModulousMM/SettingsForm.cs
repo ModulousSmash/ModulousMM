@@ -45,8 +45,13 @@ namespace ModulousMM
             {
                 SDManager.set_sd_card(folder_browse.SelectedPath);
                 Globals.config_file.sd_card_location = folder_browse.SelectedPath;
+                reload_settings();
                 File.WriteAllText(config_file_path,
                     JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
+                if (!Directory.Exists(SDCard.sd_card_mod_store_path))
+                {
+                    Directory.CreateDirectory(SDCard.sd_card_mod_store_path);
+                }
             }
         }
 
