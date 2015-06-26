@@ -5,9 +5,11 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CreativityKitchen;
 using ModulousLib;
 using Newtonsoft.Json;
 
@@ -97,6 +99,9 @@ namespace ModulousMM
             {
                 NativeMethods.AllocConsole();
                 Globals.console_attached = true;
+                Globals.CConsole = new CreativityConsole();
+                Console.SetOut(Globals.CConsole);
+                Console.WriteLine("INFO#Modulous Manager ON " + Assembly.GetExecutingAssembly().GetName().Version);
             }
         }
     }
