@@ -141,6 +141,7 @@
             this.enable_debug_features.TabIndex = 0;
             this.enable_debug_features.Text = "Load Debugging Console";
             this.enable_debug_features.UseVisualStyleBackColor = true;
+            this.enable_debug_features.Click += new System.EventHandler(this.enable_debug_features_Click);
             // 
             // SettingsForm
             // 

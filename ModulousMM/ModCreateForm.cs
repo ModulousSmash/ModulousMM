@@ -123,8 +123,8 @@ namespace ModulousMM
             string content = JsonConvert.SerializeObject(config, Formatting.Indented);
             File.WriteAllText( Path.Combine(ModulousLib.Globals.temporary_path, "mod.json") , content);
             File.Copy(lua_script_location, Path.Combine(ModulousLib.Globals.temporary_path, "init.lua"));
-            System.IO.Compression.ZipFile.CreateFromDirectory(ModulousLib.Globals.temporary_path, dialog.FileName);
-
+            System.IO.Compression.ZipFile.CreateFromDirectory(ModulousLib.Globals.temporary_path, Path.Combine(ModulousLib.Globals.temporary_path, "temp.zip"));
+            File.Copy(Path.Combine(ModulousLib.Globals.temporary_path, "temp.zip"), dialog.FileName, true);
         }
 
         private void select_lua_button_Click(object sender, EventArgs e)

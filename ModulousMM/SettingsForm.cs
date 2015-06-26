@@ -90,5 +90,14 @@ namespace ModulousMM
                     JsonConvert.SerializeObject(Globals.config_file, Formatting.Indented));
             }
         }
+
+        private void enable_debug_features_Click(object sender, EventArgs e)
+        {
+            if (!Globals.console_attached)
+            {
+                NativeMethods.AllocConsole();
+                Globals.console_attached = true;
+            }
+        }
     }
 }
